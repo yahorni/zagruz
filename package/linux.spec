@@ -1,13 +1,13 @@
 # vim: ft=python
 
-from PyInstaller.utils.hooks import collect_data_files
+from PyInstaller.utils.hooks import (collect_data_files, collect_dynamic_libs)
 
 block_cipher = None
 
 a = Analysis(
-    ['../zagruz.py'],  # Path relative to spec file location
+    ['../zagruz.py'],
     pathex=[],
-    binaries=[],
+    binaries=[*collect_dynamic_libs('PyQt6')],
     datas=collect_data_files('yt_dlp'),
     hiddenimports=[
         'yt_dlp.compat',
@@ -16,7 +16,6 @@ a = Analysis(
         'PyQt6.QtCore',
         'PyQt6.QtGui',
         'PyQt6.QtWidgets',
-        'dbus'  # Required for Linux desktop integration
     ],
     hookspath=[],
     hooksconfig={},
@@ -41,7 +40,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,  # Better for Linux terminal integration
+    console=False,
     disable_windowed_tracker=True,
     # icon='../assets/icon.png',
 )

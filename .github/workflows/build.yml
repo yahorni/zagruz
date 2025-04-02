@@ -36,15 +36,15 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Install UV
+    - name: Install UV (Linux)
+      if: runner.os == 'Linux'
       shell: bash
-      run: |
-        if [ "$RUNNER_OS" == "Linux" ]; then
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-        else
-          echo "For Windows, UV will be installed via pip (see note)"
-          pip install uv==${{ env.UV_VERSION }}
-        fi
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    - name: Install UV (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: pip install uv==${{ env.UV_VERSION }}
       env:
         UV_VERSION: ${{ env.UV_VERSION }}
 
@@ -52,13 +52,22 @@ jobs:
       run: uv sync
 
     - name: Install dependencies
+      shell: bash
       run: |
+        # if [ "$RUNNER_OS" == "Linux" ]; then
+        #   sudo apt-get update
+        #   sudo apt-get install -y libxcb1 libxcb-render-util0
+        # fi
         uv pip install .[package]
 
     - name: Build package
       shell: bash
       run: |
-        source .venv/bin/activate
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          source .venv/bin/activate
+        else
+          source .venv/Scripts/activate
+        fi
         uv run python -m PyInstaller package/${{ matrix.spec }} --noconfirm \
           --workpath build/${{ matrix.artifact }} \
           --distpath dist/${{ matrix.artifact }}
