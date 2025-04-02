@@ -13,3 +13,6 @@ dependencies = [
 package = [
     "pyinstaller>=6.0.0",
 ]
+
+[tool.basedpyright]
+reportImplicitStringConcatenation = false

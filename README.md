@@ -36,11 +36,14 @@ uv run python -m PyInstaller package/linux.spec --noconfirm
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Video download backend (supports 1000+ sites)
 
 ## TODO
-- Binary package for linux/windows
-- Preconfigured profiles of yt-dlp
-- Russian localization
-- `[download]` log parsing to prevent spam in output
-- Directory persistence between sessions
+- [x] Binary package for linux/windows
+- [ ] Package releases
+- [ ] Update button to update the app and ffmpeg dependency
+- [ ] Preconfigured profiles of yt-dlp ("best", "tv", "audio",...)
+- [ ] Russian language support
+- [ ] Configurable download format
+- [ ] Progress bar instead of `[download]` log spamming
+- [ ] Download directory persistence between sessions
 
 ## License
 ![AGPLv3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)

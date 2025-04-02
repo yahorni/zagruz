@@ -12,6 +12,8 @@ from PyQt6.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QTextEdit,
                              QVBoxLayout, QWidget)
 
+from update_handler import UpdateWorker
+
 
 class DownloadWorker(QThread):
     """A QThread subclass that handles video downloads in the background
@@ -269,8 +271,25 @@ class DownloadApp(QMainWindow):
             self.log_output.append(f"Download directory set to: {directory}")
 
     def update_app(self) -> None:
-        """Placeholder method for future update functionality"""
-        self.log_output.append("Checking for updates...")
+        """Start FFmpeg update in a background thread"""
+        if hasattr(self, 'update_thread') and self.update_thread.isRunning():
+            self.log_output.append("Update already in progress")
+            return
+
+        self.update_btn.setEnabled(False)
+        self.log_output.append("Starting FFmpeg update...")
+        self.update_thread = UpdateWorker(self.download_dir)
+        self.update_thread.output.connect(self.handle_download_output)
+        self.update_thread.finished.connect(self.update_finished)
+        self.update_thread.start()
+
+    def update_finished(self, success: bool) -> None:
+        """Handle update completion"""
+        self.update_btn.setEnabled(True)
+        if success:
+            self.log_output.append("FFmpeg update completed successfully!")
+        else:
+            self.log_output.append("FFmpeg update failed")
 
 
 def main() -> None:
