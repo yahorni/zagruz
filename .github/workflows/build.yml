@@ -36,6 +36,21 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
+    - name: Install XCB dependencies (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libxcb-cursor0 \
+          libxcb-keysyms1 \
+          libxcb-render-util0 \
+          libxcb-xkb1 \
+          libxkbcommon-x11-0 \
+          libxcb-icccm4 \
+          libxcb-image0 \
+          libxcb-shape0
+
     - name: Install UV (Linux)
       if: runner.os == 'Linux'
       shell: bash
@@ -53,12 +68,7 @@ jobs:
 
     - name: Install dependencies
       shell: bash
-      run: |
-        # if [ "$RUNNER_OS" == "Linux" ]; then
-        #   sudo apt-get update
-        #   sudo apt-get install -y libxcb1 libxcb-render-util0
-        # fi
-        uv pip install .[package]
+      run: uv pip install .[package]
 
     - name: Build package
       shell: bash
