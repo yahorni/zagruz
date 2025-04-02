@@ -1,0 +1,72 @@
+name: Build packages
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+env:
+  PYTHON_VERSION: "3.12"
+  UV_VERSION: "0.6.11"
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            spec: linux.spec
+            artifact: linux
+            ext: ""
+          - os: windows-latest
+            spec: windows.spec
+            artifact: windows
+            ext: ".exe"
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install UV
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+        else
+          echo "For Windows, UV will be installed via pip (see note)"
+          pip install uv==${{ env.UV_VERSION }}
+        fi
+      env:
+        UV_VERSION: ${{ env.UV_VERSION }}
+
+    - name: Create virtual environment
+      run: uv sync
+
+    - name: Install dependencies
+      run: |
+        uv pip install .[package]
+
+    - name: Build package
+      shell: bash
+      run: |
+        source .venv/bin/activate
+        uv run python -m PyInstaller package/${{ matrix.spec }} --noconfirm \
+          --workpath build/${{ matrix.artifact }} \
+          --distpath dist/${{ matrix.artifact }}
+      working-directory: ${{ github.workspace }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: zagruz-${{ matrix.artifact }}
+        path: dist/${{ matrix.artifact }}/*${{ matrix.ext }}
+        compression-level: 0
