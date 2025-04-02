@@ -56,7 +56,7 @@ class UpdateWorker(QThread):
             self.archive_type = "tar.xz"
             self.binary_name = "ffmpeg"
         elif system == "Windows":
-            self.ffmpeg_name = "ffmpeg-master-latest-win64-gpl-shared.zip"
+            self.ffmpeg_name = "ffmpeg-master-latest-win64-gpl.zip"
             self.archive_type = "zip"
             self.binary_name = "ffmpeg.exe"
         else:
