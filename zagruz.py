@@ -7,7 +7,7 @@ import subprocess
 import sys
 from typing import override
 
-from PyQt6.QtCore import QThread, pyqtSignal, Qt
+from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QTextEdit,
@@ -46,18 +46,20 @@ class DownloadWorker(QThread):
         try:
             self.process = subprocess.Popen(
                 [
-                    "yt-dlp",
+                    sys.executable,
+                    "-m",
+                    "yt_dlp",
                     "--add-metadata",
                     "-c",
                     "-o",
-                    f"{self.directory}/%(title)s.%(ext)s",
+                    os.path.join(self.directory, "%(title)s.%(ext)s"),
                     "-f",
                     "bestvideo[vcodec^=avc][height<=480][ext=mp4]+bestaudio[ext=mp4]",
                     self.url
                 ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                universal_newlines=True
+                text=True
             )
 
             while self.is_running:
