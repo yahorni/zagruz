@@ -5,7 +5,7 @@ from PyInstaller.utils.hooks import collect_data_files
 block_cipher = None
 
 a = Analysis(
-    ['../zagruz.py'],
+    ['../src/zagruz.py'],
     pathex=[],
     binaries=[],
     datas=collect_data_files('yt_dlp'),

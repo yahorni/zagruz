@@ -2,6 +2,7 @@
 
 import os
 import sys
+
 from PyInstaller.utils.hooks import collect_data_files
 
 # configure qt plugins to decrease final binary size
@@ -17,7 +18,7 @@ if os.path.exists(platforms_dir):
 block_cipher = None
 
 a = Analysis(
-    ['../zagruz.py'],
+    ['../src/zagruz.py'],
     pathex=[],
     binaries=qt_plugins,
     datas=collect_data_files('yt_dlp'),
