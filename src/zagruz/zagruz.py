@@ -178,7 +178,7 @@ class DownloadApp(QMainWindow):
         self.update_btn.clicked.connect(self.update_app)
 
         # Window settings
-        self.setWindowTitle("Zagruz - YouTube Downloader")
+        self.setWindowTitle("Zagruz - yt-dlp GUI Wrapper")
         self.setGeometry(100, 100, 600, 400)
 
         # Quit shortcut
@@ -186,6 +186,12 @@ class DownloadApp(QMainWindow):
         quit_action.setShortcut("Ctrl+Q")
         quit_action.triggered.connect(QApplication.instance().quit)
         self.addAction(quit_action)
+
+        # Focus shortcut
+        focus_action: QAction = QAction("Focus on URL input", self)
+        focus_action.setShortcut("Ctrl+L")
+        focus_action.triggered.connect(self.url_input.setFocus)
+        self.addAction(focus_action)
 
     def start_download(self) -> None:
         """Validate inputs and start a new download thread"""
