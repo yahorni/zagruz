@@ -46,11 +46,8 @@ jobs:
       if: runner.os == 'Linux'
       run: make ci-deps-linux
 
-    - name: Install the project
-      run: make init
-
     - name: Create package
-      run: make package
+      run: make init package
       working-directory: ${{ github.workspace }}
 
     - name: Upload artifacts

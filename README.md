@@ -4,6 +4,7 @@
 ![Platform](https://img.shields.io/badge/platform-Windows%20|%20Linux-lightgrey)
 
 A cross-platform GUI frontend for yt-dlp featuring:
+
 - Multi-site URL support via yt-dlp
 - Directory selection
 - Real-time download logging
@@ -11,40 +12,58 @@ A cross-platform GUI frontend for yt-dlp featuring:
 - Download progress monitoring
 
 ## Features
+
 - Clean PyQt6 interface
 - Smart URL validation
 - Download interruption support
 - Cross-platform compatibility
 
-## Build
+## Usage
+
 ```bash
 git clone https://github.com/yahorni/zagruz.git
 cd zagruz
+make
+```
 
-# Installs pyinstaller from optional-dependencies
-uv pip install .[package]
+## Build and install
 
-# Windows executable:
-uv run python -m PyInstaller package/windows.spec --noconfirm
+```bash
+# install dependencies
+make init
 
-# Linux executable:
-uv run python -m PyInstaller package/linux.spec --noconfirm
+# run application
+make run        # using make
+uv run zagruz   # using uv
+
+# build python package
+make build
+
+# build packaged executable (pyinstaller)
+make package
+
+# clean all build artifacts
+make clean
 ```
 
 ## Dependencies
+
 - [PyQt6](https://www.riverbankcomputing.com/software/pyqt/) - GUI framework
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Video download backend (supports 1000+ sites)
 
 ## TODO
+
 - [x] Binary package for linux/windows
-- [ ] Package releases
+- [x] Implement CI/CD pipeline with GitHub Actions
 - [ ] Update button to update the app and ffmpeg dependency
 - [ ] Preconfigured profiles of yt-dlp ("best", "tv", "audio",...)
 - [ ] Russian language support
 - [ ] Configurable download format
 - [ ] Progress bar instead of `[download]` log spamming
 - [ ] Download directory persistence between sessions
-- [ ] Testing
+- [ ] Add automated tests for download interruption/resumption
+- [ ] Add dark/light theme toggle
 
 ## License
+
 ![AGPLv3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)

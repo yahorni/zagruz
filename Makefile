@@ -1,11 +1,18 @@
 ifeq ($(OS),Windows_NT)
 	platform := windows
+	executable := zagruz.exe
 else
 	platform := linux
+	executable := zagruz
 endif
+
+default: init run
 
 init:
 	uv sync --all-extras
+
+run:
+	uv run zagruz
 
 build:
 	uv build
@@ -28,7 +35,15 @@ package:
 		--distpath dist/$(platform) \
 		package/$(platform).spec
 
-clean:
+run-package:
+	./dist/$(platform)/$(executable)
+
+clean-build:
 	rm -rf build/ dist/
 
-.PHONY: init ci-deps-linux package
+clean-venv:
+	rm -rf .venv/
+
+clean: clean-build clean-venv
+
+.PHONY: default init run build ci-deps-linux package run-package clean-build clean-venv clean
