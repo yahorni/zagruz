@@ -1,7 +1,7 @@
 [project]
 name = "zagruz"
 version = "0.1.0"
-description = "Add your description here"
+description = "yt-dlp GUI Wrapper"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -13,6 +13,13 @@ dependencies = [
 package = [
     "pyinstaller>=6.0.0",
 ]
+
+[project.scripts]
+zagruz = "zagruz:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.basedpyright]
 reportImplicitStringConcatenation = false

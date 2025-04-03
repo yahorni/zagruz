@@ -1,14 +1,12 @@
 name: Build packages
 
+# jobs configuration guide: https://docs.astral.sh/uv/guides/integration/github/
+
 on:
   push:
     branches: [master]
   pull_request:
     branches: [master]
-
-env:
-  PYTHON_VERSION: "3.12"
-  UV_VERSION: "0.6.11"
 
 jobs:
   build:
@@ -26,61 +24,31 @@ jobs:
             spec: windows.spec
             artifact: windows
             ext: ".exe"
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "0.6.12"
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
+        python-version-file: "pyproject.toml"
+
+    - name: Install the project
+      run: make init
 
     - name: Install XCB dependencies (Linux)
       if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libxcb-cursor0 \
-          libxcb-keysyms1 \
-          libxcb-render-util0 \
-          libxcb-xkb1 \
-          libxkbcommon-x11-0 \
-          libxcb-icccm4 \
-          libxcb-image0 \
-          libxcb-shape0
+      run: make ci-deps-linux
 
-    - name: Install UV (Linux)
-      if: runner.os == 'Linux'
-      shell: bash
-      run: curl -LsSf https://astral.sh/uv/install.sh | sh
-
-    - name: Install UV (Windows)
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: pip install uv==${{ env.UV_VERSION }}
-      env:
-        UV_VERSION: ${{ env.UV_VERSION }}
-
-    - name: Create virtual environment
-      run: uv sync
-
-    - name: Install dependencies
-      shell: bash
-      run: uv pip install .[package]
-
-    - name: Build package
-      shell: bash
-      run: |
-        if [ "$RUNNER_OS" == "Linux" ]; then
-          source .venv/bin/activate
-        else
-          source .venv/Scripts/activate
-        fi
-        uv run python -m PyInstaller package/${{ matrix.spec }} --noconfirm \
-          --workpath build/${{ matrix.artifact }} \
-          --distpath dist/${{ matrix.artifact }}
+    - name: Create package
+      run: make package
       working-directory: ${{ github.workspace }}
 
     - name: Upload artifacts

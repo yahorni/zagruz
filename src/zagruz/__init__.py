@@ -1,0 +1,1 @@
+from .zagruz import main

@@ -18,7 +18,7 @@ if os.path.exists(platforms_dir):
 block_cipher = None
 
 a = Analysis(
-    ['../src/zagruz.py'],
+    ['../src/zagruz/zagruz.py'],
     pathex=[],
     binaries=qt_plugins,
     datas=collect_data_files('yt_dlp'),

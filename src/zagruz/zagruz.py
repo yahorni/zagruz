@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QTextEdit,
                              QVBoxLayout, QWidget)
 
-from update_handler import UpdateWorker
+from .update_handler import UpdateWorker
 
 
 class DownloadWorker(QThread):
