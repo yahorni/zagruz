@@ -55,8 +55,8 @@ make clean
 
 - [x] Binary package for linux/windows
 - [x] Implement CI/CD pipeline with GitHub Actions
-- [ ] Update button to update the app and ffmpeg dependency
-- [ ] Preconfigured profiles of yt-dlp ("best", "tv", "audio",...)
+- [x] Preconfigured profiles of yt-dlp ("best", "tv", "audio",...)
+- [ ] Make "Update" button to update the app and ffmpeg dependency
 - [ ] Russian language support
 - [ ] Configurable download format
 - [ ] Progress bar instead of `[download]` log spamming

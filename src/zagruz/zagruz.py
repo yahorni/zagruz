@@ -6,9 +6,10 @@ from typing import override
 
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QAction
-from PyQt6.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
-                             QLineEdit, QMainWindow, QPushButton, QTextEdit,
-                             QVBoxLayout, QWidget)
+from PyQt6.QtWidgets import (QApplication, QComboBox, QFileDialog, QFrame,
+                             QHBoxLayout, QLabel, QLineEdit, QMainWindow,
+                             QPushButton, QStyle, QTextEdit, QVBoxLayout,
+                             QWidget)
 
 from zagruz.update_handler import UpdateWorker
 
@@ -26,16 +27,18 @@ class DownloadWorker(QThread):
     output: pyqtSignal = pyqtSignal(str)
     finished: pyqtSignal = pyqtSignal(bool)
 
-    def __init__(self, url: str, directory: str) -> None:
+    def __init__(self, url: str, directory: str, format: str) -> None:
         """Initialize download worker with target URL and directory
 
         Args:
             url: Video URL to download
             directory: Output directory for downloaded files
+            format: Selected format preset
         """
         super().__init__()
         self.url: str = url
         self.directory: str = directory
+        self.format: str = format
         self.process: subprocess.Popen[str] | None = None
         self.should_stop: bool = False
 
@@ -68,9 +71,14 @@ class DownloadWorker(QThread):
                 raise Exception("Download interrupted by user")
 
         ydl_opts = {
-            'outtmpl': os.path.join(self.directory, '%(title)s.%(ext)s'),
-            'format': 'bestvideo[vcodec^=avc][height<=480][ext=mp4]+bestaudio[ext=mp4]',
+            'outtmpl': os.path.join(self.directory, self.get_title_format()),
+            'format': self.get_ytdlp_format(),
             'addmetadata': True,
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '320',
+            }] if "Audio" in self.format else [],
             'logger': ProgressLogger(self.output),
             'progress_hooks': [progress_hook],
             # Disable ANSI escape codes at source
@@ -94,9 +102,29 @@ class DownloadWorker(QThread):
         """Gracefully stop the download process if running"""
         self.should_stop = True
 
+    def get_ytdlp_format(self) -> str | None:
+        """Return yt-dlp format string based on selected preset"""
+        if self.format.startswith("TV"):
+            return "bestvideo[vcodec^=avc][height<=480][ext=mp4]+bestaudio[ext=mp4]"
+        if self.format.startswith("Audio"):
+            return "bestaudio"
+        return None
+
+    def get_title_format(self) -> str:
+        """Return yt-dlp filename based on selected preset and given link"""
+        playlist_format = '%(playlist_index)s'
+        title_format = '%(title)s.%(ext)s'
+        if 'playlist?list' in self.url:
+            if self.format.startswith("Audio"):
+                return playlist_format + ". %(uploader)s - " + title_format
+            else:
+                return playlist_format + ". " + title_format
+        else:
+            return title_format
+
 
 class DownloadApp(QMainWindow):
-    """Main application window for the YouTube downloader GUI
+    """Main application window for the yt-dlp GUI
 
     Attributes:
         download_thread: Current active download thread
@@ -119,19 +147,36 @@ class DownloadApp(QMainWindow):
 
         # URL input with placeholder
         self.url_input: QLineEdit = QLineEdit()
-        self.url_input.setPlaceholderText("Insert YouTube link to download")
+        self.url_input.setPlaceholderText("Insert URL to download")
         self.url_input.returnPressed.connect(self.start_download)
+
+        # Format selection dropdown with label
+        format_label = QLabel("Format:")
+        self.format_combo: QComboBox = QComboBox()
+        self.format_combo.addItems([
+            "Default (best)",
+            "TV (MP4, 480p)",
+            "Audio (MP3, 320kbps)"
+        ])
+        self.format_combo.setCurrentIndex(1)  # Default to TV (480)
+        self.format_combo.setFixedWidth(150)
+
+        # Visual separator
+        separator = QFrame()
+        separator.setFrameShape(QFrame.Shape.VLine)
+        separator.setStyleSheet("color: #b0b0b0; margin: 0 10px;")
 
         # Directory selection
         dir_layout = QHBoxLayout()
-        dir_label = QLabel("Download Directory:")
+        dir_label = QLabel("Directory:")
         self.dir_input: QLineEdit = QLineEdit()
         self.dir_input.setReadOnly(True)
         self.dir_input.setPlaceholderText("Download directory not selected")
         self.dir_input.setText(self.download_dir)
         self.dir_input.setStyleSheet("background-color: #f0f0f0; font-style: italic;")
-        self.dir_btn: QPushButton = QPushButton("Choose Directory")
-        self.dir_btn.setStyleSheet("background-color: #FFA500; color: white;")
+        self.dir_btn: QPushButton = QPushButton()
+        self.dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon))
+        self.dir_btn.setToolTip("Choose download directory")
         dir_layout.addWidget(dir_label)
         dir_layout.addWidget(self.dir_input)
         dir_layout.addWidget(self.dir_btn)
@@ -149,20 +194,26 @@ class DownloadApp(QMainWindow):
         self.update_btn.setStyleSheet(
             "background-color: #2196F3; color: white;")
 
-        # Button layout
-        button_layout = QHBoxLayout()
-        button_layout.addWidget(self.download_btn)
-        button_layout.addWidget(self.interrupt_btn)
-        button_layout.addWidget(self.update_btn)
+        # Create horizontal lines
+        url_line = QHBoxLayout()
+        url_line.addWidget(self.url_input, 1)
+        url_line.addWidget(self.download_btn)
+        url_line.addWidget(self.interrupt_btn)
+        url_line.addWidget(self.update_btn)
+
+        options_line = QHBoxLayout()
+        options_line.addLayout(dir_layout)
+        options_line.addWidget(separator)
+        options_line.addWidget(format_label)
+        options_line.addWidget(self.format_combo)
 
         # Log output area
         self.log_output: QTextEdit = QTextEdit()
         self.log_output.setReadOnly(True)
 
         # Assemble layout
-        layout.addWidget(self.url_input)
-        layout.addLayout(button_layout)
-        layout.addLayout(dir_layout)  # Add directory selection row
+        layout.addLayout(url_line)
+        layout.addLayout(options_line)
         layout.addWidget(self.log_output)
 
         # Quit shortcut hint
@@ -197,7 +248,7 @@ class DownloadApp(QMainWindow):
         """Validate inputs and start a new download thread"""
         url = self.url_input.text().strip()
         if not url:
-            self.log_output.append("Error: Please enter a YouTube URL")
+            self.log_output.append("Error: Please enter a URL")
             return
 
         if not self.validate_url(url):
@@ -215,7 +266,7 @@ class DownloadApp(QMainWindow):
             self.log_output.append("Error: Please select a download directory")
             return
 
-        self.download_thread = DownloadWorker(url, self.download_dir)
+        self.download_thread = DownloadWorker(url, self.download_dir, self.format_combo.currentText())
         self.download_thread.output.connect(self.handle_download_output)
         self.download_thread.finished.connect(self.download_finished)
         self.download_thread.start()
