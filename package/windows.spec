@@ -35,7 +35,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='zagruz-win.exe',
+    name='zagruz.exe',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

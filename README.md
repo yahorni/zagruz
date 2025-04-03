@@ -44,6 +44,7 @@ uv run python -m PyInstaller package/linux.spec --noconfirm
 - [ ] Configurable download format
 - [ ] Progress bar instead of `[download]` log spamming
 - [ ] Download directory persistence between sessions
+- [ ] Testing
 
 ## License
 ![AGPLv3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)

@@ -46,7 +46,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='zagruz-linux',
+    name='zagruz',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

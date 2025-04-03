@@ -39,13 +39,15 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version-file: "pyproject.toml"
+        enable-cache: true
+        cache-dependency-glob: "pyproject.toml"
+
+    - name: Install CI dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: make ci-deps-linux
 
     - name: Install the project
       run: make init
-
-    - name: Install XCB dependencies (Linux)
-      if: runner.os == 'Linux'
-      run: make ci-deps-linux
 
     - name: Create package
       run: make package

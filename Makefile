@@ -7,6 +7,9 @@ endif
 init:
 	uv sync --all-extras
 
+build:
+	uv build
+
 ci-deps-linux:
 	sudo apt-get update
 	sudo apt-get install -y \
@@ -22,8 +25,10 @@ ci-deps-linux:
 package:
 	uv run pyinstaller \
 		--noconfirm \
-		--workpath build/$(platform) \
 		--distpath dist/$(platform) \
 		package/$(platform).spec
+
+clean:
+	rm -rf build/ dist/
 
 .PHONY: init ci-deps-linux package
