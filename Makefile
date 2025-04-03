@@ -17,6 +17,9 @@ run:
 build:
 	uv build
 
+test:
+	uv run python -m unittest discover -s tests -v
+
 ci-deps-linux:
 	sudo apt-get update
 	sudo apt-get install -y \

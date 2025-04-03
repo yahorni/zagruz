@@ -37,7 +37,7 @@ class DownloadWorker(QThread):
         self.url: str = url
         self.directory: str = directory
         self.process: subprocess.Popen[str] | None = None
-        self.is_running: bool = True
+        self.should_stop: bool = False
 
     @override
     def run(self) -> None:
@@ -45,20 +45,20 @@ class DownloadWorker(QThread):
         from yt_dlp import YoutubeDL
 
         class ProgressLogger:
-            def __init__(self, output_signal):
-                self.output_signal = output_signal
+            def __init__(self, output_signal: pyqtSignal):
+                self.output_signal: pyqtSignal = output_signal
 
-            def debug(self, msg):
+            def debug(self, msg: str):
                 if not msg.startswith('[debug]'):
                     self.output_signal.emit(msg)
 
-            def info(self, msg):
+            def info(self, msg: str):
                 self.output_signal.emit(msg)
 
-            def warning(self, msg):
+            def warning(self, msg: str):
                 self.output_signal.emit(f"Warning: {msg}")
 
-            def error(self, msg):
+            def error(self, msg: str):
                 self.output_signal.emit(f"Error: {msg}")
 
         self.should_stop = False
@@ -93,7 +93,6 @@ class DownloadWorker(QThread):
     def stop(self) -> None:
         """Gracefully stop the download process if running"""
         self.should_stop = True
-        self.is_running = False
 
 
 class DownloadApp(QMainWindow):
@@ -104,11 +103,12 @@ class DownloadApp(QMainWindow):
         download_dir: Currently selected download directory
     """
 
-    def __init__(self) -> None:
+    def __init__(self, ui: bool = True) -> None:
         super().__init__()
         self.download_thread: DownloadWorker | None = None
         self.download_dir: str = os.getcwd()
-        self.init_ui()
+        if ui:
+            self.init_ui()
 
     def init_ui(self) -> None:
         """Initialize and arrange all UI components"""
@@ -194,8 +194,8 @@ class DownloadApp(QMainWindow):
             self.log_output.append("Error: Please enter a YouTube URL")
             return
 
-        if not self.validate_youtube_url(url):
-            self.log_output.append("Error: Invalid YouTube URL")
+        if not self.validate_url(url):
+            self.log_output.append("Error: Invalid URL")
             return
 
         if self.download_thread and self.download_thread.isRunning():
@@ -214,22 +214,28 @@ class DownloadApp(QMainWindow):
         self.download_thread.finished.connect(self.download_finished)
         self.download_thread.start()
 
-    def validate_youtube_url(self, url: str) -> bool:
-        """Check if a URL matches valid YouTube URL patterns
+    def validate_url(self, url: str) -> bool:
+        """Validate HTTP/HTTPS URLs with basic pattern matching
 
         Args:
             url: The URL string to validate
 
         Returns:
-            bool: True if URL matches known YouTube patterns, False otherwise
+            bool: True if URL matches valid HTTP/HTTPS pattern, False otherwise
         """
-        patterns = [
-            r"^https?://(www\.)?youtube\.com/watch\?v=",
-            r"^https?://youtu\.be/",
-            r"^https?://(www\.)?youtube\.com/shorts/",
-            r"^https?://(www\.)?youtube\.com/playlist\?list="
-        ]
-        return any(re.match(pattern, url) for pattern in patterns)
+        pattern = re.compile(
+            r"^https?://"  # http:// or https://
+            r"(?:[^/:@]+(?::[^/@]*)?@)?"  # user:pass@
+            r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # domain
+            r"localhost|"  # localhost
+            r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # IPv4
+            r"(?::\d+)?"  # port
+            r"(?:/[\w~%!$&'()*+,;=:@.-]*)*"  # path
+            r"(?:\?[\w~%!$&'()*+,;=:@/?-]*)?"  # query
+            r"(?:\#[\w~%!$&'()*+,;=:@/?-]*)?$",  # fragment (escaped #)
+            re.IGNORECASE
+        )
+        return pattern.fullmatch(url) is not None
 
     def handle_download_output(self, message: str) -> None:
         """Append download process messages to the log output
