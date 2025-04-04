@@ -40,10 +40,10 @@ class UpdateWorker(QThread):
                 self.output.emit(f"Successfully updated FFmpeg to latest version at {self.dest_path}")
                 self.finished.emit(True)
         except URLError as e:
-            self.output.emit(f"Download failed: {str(e)}")
+            self.output.emit(f"[update] Download failed: {str(e)}")
             self.finished.emit(False)
         except Exception as e:
-            self.output.emit(f"Error updating FFmpeg: {str(e)}")
+            self.output.emit(f"[update] Error updating FFmpeg: {str(e)}")
             self.finished.emit(False)
 
     def _get_platform_settings(self) -> None:
@@ -68,7 +68,7 @@ class UpdateWorker(QThread):
         """Handle FFmpeg download with progress reporting"""
         url = f"{self.base_url}{self.ffmpeg_name}"
         archive_path = os.path.join(tmpdir, self.ffmpeg_name)
-        self.output.emit(f"Downloading FFmpeg from {url}...")
+        self.output.emit(f"[update] Downloading FFmpeg from {url}...")
 
         # Progress reporting setup
         start_time = time.time()
@@ -90,13 +90,13 @@ class UpdateWorker(QThread):
             if totalsize > 0:
                 percent = downloaded_bytes / totalsize * 100
                 self.output.emit(
-                    f"Download progress: {percent:.1f}% "
+                    f"[update] Download progress: {percent:.1f}% "
                     f"({downloaded_bytes/1e6:.2f} MB of {totalsize/1e6:.2f} MB) "
                     f"at {speed/1e6:.2f} MB/s"
                 )
             else:
                 self.output.emit(
-                    f"Downloaded {downloaded_bytes/1e6:.2f} MB "
+                    f"[update] Downloaded {downloaded_bytes/1e6:.2f} MB "
                     f"at {speed/1e6:.2f} MB/s"
                 )
 
@@ -105,12 +105,12 @@ class UpdateWorker(QThread):
         if actual_path != archive_path:
             raise RuntimeError(f"Download path mismatch: {actual_path} vs {archive_path}")
 
-        self.output.emit("Download completed successfully")
+        self.output.emit("[update] Download completed successfully")
         return archive_path
 
     def _extract_archive(self, archive_path: str, tmpdir: str) -> str:
         """Handle archive extraction based on file type"""
-        self.output.emit("Extracting files...")
+        self.output.emit("[update] Extracting files...")
 
         if self.archive_type == "tar.xz":
             with tarfile.open(archive_path, "r:xz") as tar:
