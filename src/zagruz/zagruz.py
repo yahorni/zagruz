@@ -4,12 +4,13 @@ import subprocess
 import sys
 from typing import override
 
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtGui import QAction
+from PyQt6.QtCore import Qt, QThread, QUrl, pyqtSignal
+from PyQt6.QtGui import QAction, QDesktopServices
 from PyQt6.QtWidgets import (QApplication, QComboBox, QFileDialog, QFrame,
                              QHBoxLayout, QLabel, QLineEdit, QMainWindow,
                              QPushButton, QStyle, QTextEdit, QVBoxLayout,
                              QWidget)
+from yt_dlp import YoutubeDL
 
 from zagruz.update_handler import UpdateWorker
 
@@ -45,7 +46,6 @@ class DownloadWorker(QThread):
     @override
     def run(self) -> None:
         """Main thread execution method that runs the yt-dlp process"""
-        from yt_dlp import YoutubeDL
 
         class ProgressLogger:
             def __init__(self, output_signal: pyqtSignal):
@@ -177,22 +177,32 @@ class DownloadApp(QMainWindow):
         self.dir_btn: QPushButton = QPushButton()
         self.dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon))
         self.dir_btn.setToolTip("Choose download directory")
+
         dir_layout.addWidget(dir_label)
         dir_layout.addWidget(self.dir_input)
         dir_layout.addWidget(self.dir_btn)
 
         # Buttons with styles
-        self.download_btn: QPushButton = QPushButton("Download")
+        self.download_btn: QPushButton = QPushButton(" Download")
+        self.download_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton))
         self.download_btn.setStyleSheet(
-            "background-color: #4CAF50; color: white;")
+            "background-color: #4CAF50; color: black; padding: 5px 10px 5px 5px;")
 
-        self.interrupt_btn: QPushButton = QPushButton("Interrupt")
+        self.interrupt_btn: QPushButton = QPushButton(" Interrupt")
+        self.interrupt_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton))
         self.interrupt_btn.setStyleSheet(
-            "background-color: #f44336; color: white;")
+            "background-color: #f44336; color: black; padding: 5px 10px 5px 5px;")
 
-        self.update_btn: QPushButton = QPushButton("Update")
+        self.update_btn: QPushButton = QPushButton(" Update")
+        self.update_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload))
         self.update_btn.setStyleSheet(
-            "background-color: #2196F3; color: white;")
+            "background-color: #2196F3; color: black; padding: 5px 10px 5px 5px;")
+
+        self.open_dir_btn: QPushButton = QPushButton(" Open")
+        self.open_dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
+        self.open_dir_btn.setToolTip("Open download directory")
+        self.open_dir_btn.setStyleSheet(
+            "background-color: #FFC107; color: black; padding: 5px 10px 5px 5px;")
 
         # Create horizontal lines
         url_line = QHBoxLayout()
@@ -200,6 +210,7 @@ class DownloadApp(QMainWindow):
         url_line.addWidget(self.download_btn)
         url_line.addWidget(self.interrupt_btn)
         url_line.addWidget(self.update_btn)
+        url_line.addWidget(self.open_dir_btn)
 
         options_line = QHBoxLayout()
         options_line.addLayout(dir_layout)
@@ -225,6 +236,7 @@ class DownloadApp(QMainWindow):
         # Connect buttons (placeholder functions)
         self.download_btn.clicked.connect(self.start_download)
         self.dir_btn.clicked.connect(self.choose_directory)
+        self.open_dir_btn.clicked.connect(self.open_directory)
         self.interrupt_btn.clicked.connect(self.interrupt_download)
         self.update_btn.clicked.connect(self.update_app)
 
@@ -330,6 +342,15 @@ class DownloadApp(QMainWindow):
             self.download_dir = directory
             self.dir_input.setText(directory)
             self.log_output.append(f"Download directory set to: {directory}")
+
+    def open_directory(self) -> None:
+        """Open download directory in system file explorer"""
+        if not os.path.isdir(self.download_dir):
+            self.log_output.append(f"Error: Directory does not exist - {self.download_dir}")
+            return
+
+        # Use Qt's platform-agnostic URL opening
+        QDesktopServices.openUrl(QUrl.fromLocalFile(self.download_dir))
 
     def update_app(self) -> None:
         """Start FFmpeg update in a background thread"""
