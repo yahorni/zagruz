@@ -4,12 +4,12 @@ import sys
 
 from PyQt6.QtCore import Qt, QUrl
 from PyQt6.QtGui import QAction, QDesktopServices
-from PyQt6.QtWidgets import (QApplication, QComboBox, QFileDialog, QFrame,
-                             QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-                             QPushButton, QStyle, QTextEdit, QVBoxLayout,
-                             QWidget)
+from PyQt6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
+                             QLineEdit, QMainWindow, QPushButton, QStyle,
+                             QTextEdit, QVBoxLayout, QWidget)
 
 from zagruz.download_worker import DownloadWorker
+from zagruz.options_dialog import OptionsDialog
 from zagruz.update_worker import UpdateWorker
 
 
@@ -25,6 +25,7 @@ class DownloadApp(QMainWindow):
         super().__init__()
         self.download_thread: DownloadWorker | None = None
         self.download_dir: str = os.getcwd()
+        self.selected_format = "TV (MP4, 480p)"  # Default format
         if ui:
             self.init_ui()
 
@@ -39,38 +40,6 @@ class DownloadApp(QMainWindow):
         self.url_input: QLineEdit = QLineEdit()
         self.url_input.setPlaceholderText("Insert URL to download")
         self.url_input.returnPressed.connect(self.start_download)
-
-        # Format selection dropdown with label
-        format_label = QLabel("Format:")
-        self.format_combo: QComboBox = QComboBox()
-        self.format_combo.addItems([
-            "Default (best)",
-            "TV (MP4, 480p)",
-            "Audio (MP3, 320kbps)"
-        ])
-        self.format_combo.setCurrentIndex(1)  # Default to TV
-        self.format_combo.setFixedWidth(150)
-
-        # Visual separator
-        separator = QFrame()
-        separator.setFrameShape(QFrame.Shape.VLine)
-        separator.setStyleSheet("color: #b0b0b0; margin: 0 10px;")
-
-        # Directory selection
-        dir_layout = QHBoxLayout()
-        dir_label = QLabel("Directory:")
-        self.dir_input: QLineEdit = QLineEdit()
-        self.dir_input.setReadOnly(True)
-        self.dir_input.setPlaceholderText("Download directory not selected")
-        self.dir_input.setText(self.download_dir)
-        self.dir_input.setStyleSheet("background-color: #f0f0f0; font-style: italic;")
-        self.dir_btn: QPushButton = QPushButton()
-        self.dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon))
-        self.dir_btn.setToolTip("Choose download directory")
-
-        dir_layout.addWidget(dir_label)
-        dir_layout.addWidget(self.dir_input)
-        dir_layout.addWidget(self.dir_btn)
 
         # Buttons with styles
         self.download_btn: QPushButton = QPushButton(" Download")
@@ -94,19 +63,23 @@ class DownloadApp(QMainWindow):
         self.open_dir_btn.setStyleSheet(
             "background-color: #FFC107; color: black; padding: 5px 10px 5px 5px;")
 
+        self.options_btn: QPushButton = QPushButton(" Options")
+        self.options_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
+        self.options_btn.setStyleSheet(
+            "background-color: #9C27B0; color: black; padding: 5px 10px 5px 5px;")
+        self.options_btn.setToolTip("Application settings")
+
         # Create horizontal lines
         url_line = QHBoxLayout()
         url_line.addWidget(self.url_input, 1)
-        url_line.addWidget(self.download_btn)
-        url_line.addWidget(self.interrupt_btn)
-        url_line.addWidget(self.update_btn)
-        url_line.addWidget(self.open_dir_btn)
 
-        options_line = QHBoxLayout()
-        options_line.addLayout(dir_layout)
-        options_line.addWidget(separator)
-        options_line.addWidget(format_label)
-        options_line.addWidget(self.format_combo)
+        # Create new button line below URL input
+        button_line = QHBoxLayout()
+        button_line.addWidget(self.download_btn)
+        button_line.addWidget(self.interrupt_btn)
+        button_line.addWidget(self.update_btn)
+        button_line.addWidget(self.open_dir_btn)
+        button_line.addWidget(self.options_btn)
 
         # Log output area
         self.log_output: QTextEdit = QTextEdit()
@@ -114,7 +87,7 @@ class DownloadApp(QMainWindow):
 
         # Assemble layout
         layout.addLayout(url_line)
-        layout.addLayout(options_line)
+        layout.addLayout(button_line)
         layout.addWidget(self.log_output)
 
         # Quit shortcut hint
@@ -125,10 +98,10 @@ class DownloadApp(QMainWindow):
 
         # Connect buttons (placeholder functions)
         self.download_btn.clicked.connect(self.start_download)
-        self.dir_btn.clicked.connect(self.choose_directory)
-        self.open_dir_btn.clicked.connect(self.open_directory)
         self.interrupt_btn.clicked.connect(self.interrupt_download)
         self.update_btn.clicked.connect(self.update_app)
+        self.open_dir_btn.clicked.connect(self.open_directory)
+        self.options_btn.clicked.connect(self.show_options)
 
         # Window settings
         self.setWindowTitle("Zagruz - yt-dlp GUI Wrapper")
@@ -168,7 +141,7 @@ class DownloadApp(QMainWindow):
             self.log_output.append("Error: Please select a download directory")
             return
 
-        self.download_thread = DownloadWorker(url, self.download_dir, self.format_combo.currentText())
+        self.download_thread = DownloadWorker(url, self.download_dir, self.selected_format)
         self.download_thread.output.connect(self.handle_download_output)
         self.download_thread.finished.connect(self.download_finished)
         self.download_thread.start()
@@ -225,14 +198,6 @@ class DownloadApp(QMainWindow):
         else:
             self.log_output.append("No active download to interrupt")
 
-    def choose_directory(self) -> None:
-        """Open directory dialog and set download path"""
-        directory = QFileDialog.getExistingDirectory(self, "Select Download Directory")
-        if directory:
-            self.download_dir = directory
-            self.dir_input.setText(directory)
-            self.log_output.append(f"Download directory set to: {directory}")
-
     def open_directory(self) -> None:
         """Open download directory in system file explorer"""
         if not os.path.isdir(self.download_dir):
@@ -262,6 +227,25 @@ class DownloadApp(QMainWindow):
             self.log_output.append("FFmpeg update completed successfully!")
         else:
             self.log_output.append("FFmpeg update failed")
+
+    def show_options(self) -> None:
+        """Show the options dialog window"""
+        dialog = OptionsDialog(self)
+        dialog.dir_input.setText(self.download_dir)
+        dialog.format_combo.setCurrentText(self.selected_format)
+
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            # Update download directory from dialog
+            new_dir = dialog.dir_input.text()
+            if new_dir != self.download_dir and new_dir and os.path.isdir(new_dir):
+                self.download_dir = new_dir
+                self.log_output.append(f"Download directory updated to: {new_dir}")
+
+            # Update format from dialog
+            new_format = dialog.format_combo.currentText()
+            if new_format != self.selected_format and new_format:
+                self.selected_format = dialog.format_combo.currentText()
+                self.log_output.append(f"Download format updated to: {new_format}")
 
 
 def main() -> None:
