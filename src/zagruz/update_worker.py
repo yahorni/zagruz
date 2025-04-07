@@ -1,13 +1,13 @@
 import os
 import platform
+import shutil
 import tarfile
 import tempfile
 import time
 import urllib.request
 import zipfile
-import shutil
-from urllib.error import URLError
 from typing import override
+from urllib.error import URLError
 
 from PyQt6.QtCore import QThread, pyqtSignal
 
