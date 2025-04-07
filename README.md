@@ -1,4 +1,4 @@
-# Zagruz - yt-dlp GUI Wrapper
+# zagruz - yt-dlp GUI Wrapper
 
 ![PyQt6](https://img.shields.io/badge/PyQt6-41CD52?logo=qt&logoColor=white)
 ![Platform](https://img.shields.io/badge/platform-Windows%20|%20Linux-lightgrey)
@@ -48,21 +48,32 @@ make clean
 
 ## Dependencies
 
-- [PyQt6](https://www.riverbankcomputing.com/software/pyqt/) - GUI framework
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Video download backend (supports 1000+ sites)
+- [PyQt6](https://www.riverbankcomputing.com/software/pyqt/) - GUI framework
+- [PyQtDarkTheme](https://github.com/5yutan5/PyQtDarkTheme/) - Qt app theme
 
 ## TODO
 
 - [x] Binary package for linux/windows
 - [x] Implement CI/CD pipeline with GitHub Actions
 - [x] Preconfigured profiles of yt-dlp ("best", "tv", "audio",...)
-- [ ] Make "Update" button to update the app and ffmpeg dependency
-- [ ] Russian language support
-- [ ] Configurable download format
+- [ ] "Options" button + window
+  - [x] Add dark/light theme toggle
+  - [x] Download directory selection
+  - [ ] Russian language support
+- [ ] Configuration file (QSettings)
+  - [x] Selected theme
+  - [ ] Selected language
+  - [ ] Download directory persistence between sessions
+- [ ] Ffmpeg executable
+  - [x] Download with "Update" button
+  - [ ] Startup availability check
+  - [ ] Use downloaded binary without app restart
+- [ ] Implement Github releases
+  - [ ] Make "Update" button to update the app with last github release
+- [ ] Configurable download formats
 - [ ] Progress bar instead of `[download]` log spamming
-- [ ] Download directory persistence between sessions
 - [ ] Add automated tests for download interruption/resumption
-- [ ] Add dark/light theme toggle
 
 ## License
 

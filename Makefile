@@ -49,4 +49,7 @@ clean-venv:
 
 clean: clean-build clean-venv
 
-.PHONY: default init run build ci-deps-linux package run-package clean-build clean-venv clean
+widgets:
+	uv run python -m qdarktheme.widget_gallery
+
+.PHONY: default init run build test ci-deps-linux package clean-build clean-venv clean widgets

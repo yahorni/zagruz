@@ -1,4 +1,4 @@
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSettings
 from PyQt6.QtWidgets import (QApplication, QComboBox, QDialog, QFileDialog,
                              QFormLayout, QHBoxLayout, QLineEdit, QPushButton,
                              QStyle, QVBoxLayout, QWidget)
@@ -27,6 +27,7 @@ class OptionsDialog(QDialog):
         # Theme selection
         self.theme_combo = QComboBox()
         self.theme_combo.addItems(["System", "Light", "Dark"])
+        self.theme_combo.setCurrentText(QSettings().value("theme", "System", type=str))
         form_layout.addRow("Theme:", self.theme_combo)
 
         # Format selection
@@ -56,9 +57,8 @@ class OptionsDialog(QDialog):
         # Dialog buttons
         button_box = QHBoxLayout()
         self.save_btn = QPushButton("Save")
-        self.save_btn.setStyleSheet("background-color: #4CAF50; color: white;")
         self.cancel_btn = QPushButton("Cancel")
-        self.cancel_btn.setStyleSheet("background-color: #f44336; color: white;")
+        self.save_btn.setDefault(True)
 
         button_box.addWidget(self.save_btn)
         button_box.addWidget(self.cancel_btn)

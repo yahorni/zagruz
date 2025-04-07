@@ -2,7 +2,8 @@ import os
 import re
 import sys
 
-from PyQt6.QtCore import Qt, QUrl
+import qdarktheme
+from PyQt6.QtCore import QSettings, Qt, QUrl
 from PyQt6.QtGui import QAction, QDesktopServices
 from PyQt6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QStyle,
@@ -26,8 +27,10 @@ class DownloadApp(QMainWindow):
         self.download_thread: DownloadWorker | None = None
         self.download_dir: str = os.getcwd()
         self.selected_format = "TV (MP4, 480p)"  # Default format
+        self.settings = QSettings()
         if ui:
             self.init_ui()
+            self.apply_theme(self.settings.value("theme", "System", type=str))
 
     def init_ui(self) -> None:
         """Initialize and arrange all UI components"""
@@ -44,29 +47,23 @@ class DownloadApp(QMainWindow):
         # Buttons with styles
         self.download_btn: QPushButton = QPushButton(" Download")
         self.download_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton))
-        self.download_btn.setStyleSheet(
-            "background-color: #4CAF50; color: black; padding: 5px 10px 5px 5px;")
+        self.download_btn.setToolTip("Download video/audio")
+        self.download_btn.setDefault(True)
 
         self.interrupt_btn: QPushButton = QPushButton(" Interrupt")
         self.interrupt_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton))
-        self.interrupt_btn.setStyleSheet(
-            "background-color: #f44336; color: black; padding: 5px 10px 5px 5px;")
+        self.interrupt_btn.setToolTip("Interrupt current download")
 
         self.update_btn: QPushButton = QPushButton(" Update")
         self.update_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload))
-        self.update_btn.setStyleSheet(
-            "background-color: #2196F3; color: black; padding: 5px 10px 5px 5px;")
+        self.update_btn.setToolTip("Update application and/or ffmpeg")
 
         self.open_dir_btn: QPushButton = QPushButton(" Open")
         self.open_dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
         self.open_dir_btn.setToolTip("Open download directory")
-        self.open_dir_btn.setStyleSheet(
-            "background-color: #FFC107; color: black; padding: 5px 10px 5px 5px;")
 
         self.options_btn: QPushButton = QPushButton(" Options")
         self.options_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
-        self.options_btn.setStyleSheet(
-            "background-color: #9C27B0; color: black; padding: 5px 10px 5px 5px;")
         self.options_btn.setToolTip("Application settings")
 
         # Create horizontal lines
@@ -92,7 +89,7 @@ class DownloadApp(QMainWindow):
 
         # Quit shortcut hint
         hint_label = QLabel("Hint: Press Ctrl+Q to quit at any time")
-        hint_label.setStyleSheet("color: #666666; font-style: italic;")
+        hint_label.setStyleSheet("font-style: italic;")
         hint_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
         layout.addWidget(hint_label)
 
@@ -104,7 +101,7 @@ class DownloadApp(QMainWindow):
         self.options_btn.clicked.connect(self.show_options)
 
         # Window settings
-        self.setWindowTitle("Zagruz - yt-dlp GUI Wrapper")
+        self.setWindowTitle("zagruz - yt-dlp GUI Wrapper")
         self.setGeometry(100, 100, 600, 400)
 
         # Quit shortcut
@@ -198,6 +195,18 @@ class DownloadApp(QMainWindow):
         else:
             self.log_output.append("No active download to interrupt")
 
+    def apply_theme(self, theme_name: str) -> None:
+        """Apply selected theme using qdarktheme"""
+
+        # Don't use full qdarktheme, just palette + stylesheets
+        theme = theme_name.lower() if theme_name != "System" else "auto"
+        self.setPalette(qdarktheme.load_palette(theme))
+        self.setStyleSheet(qdarktheme.load_stylesheet(theme))
+
+        # Force refresh of all UI elements
+        self.style().unpolish(self)
+        self.style().polish(self)
+
     def open_directory(self) -> None:
         """Open download directory in system file explorer"""
         if not os.path.isdir(self.download_dir):
@@ -247,10 +256,21 @@ class DownloadApp(QMainWindow):
                 self.selected_format = dialog.format_combo.currentText()
                 self.log_output.append(f"Download format updated to: {new_format}")
 
+            # Update theme from dialog
+            new_theme = dialog.theme_combo.currentText()
+            current_theme = self.settings.value("theme", "System", type=str)
+            if new_theme != current_theme:
+                self.settings.setValue("theme", new_theme)
+                self.apply_theme(new_theme)
+                self.log_output.append(f"Theme changed to: {new_theme}")
+
 
 def main() -> None:
-    """Main entry point for the Zagruz application"""
+    """Main entry point for the zagruz application"""
+    qdarktheme.enable_hi_dpi()
     app = QApplication(sys.argv)
+    app.setOrganizationName("zagruz")
+    app.setApplicationName("zagruz")
     window = DownloadApp()
     window.show()
     sys.exit(app.exec())
