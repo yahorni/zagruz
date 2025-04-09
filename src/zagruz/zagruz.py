@@ -271,6 +271,8 @@ def main() -> None:
     app = QApplication(sys.argv)
     app.setOrganizationName("zagruz")
     app.setApplicationName("zagruz")
+    if sys.platform == "win32":
+        app.setStyle("Windows")
     window = DownloadApp()
     window.show()
     sys.exit(app.exec())

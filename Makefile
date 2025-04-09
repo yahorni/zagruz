@@ -49,7 +49,10 @@ clean-venv:
 
 clean: clean-build clean-venv
 
-widgets:
+ui-widgets:
 	uv run python -m qdarktheme.widget_gallery
+
+ui-themes:
+	uv run python -c 'from PyQt6.QtWidgets import QStyleFactory; print(QStyleFactory.keys())'
 
 .PHONY: default init run build test ci-deps-linux package clean-build clean-venv clean widgets
