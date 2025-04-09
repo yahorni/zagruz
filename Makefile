@@ -49,10 +49,21 @@ clean-venv:
 
 clean: clean-build clean-venv
 
+# utils
+
 ui-widgets:
 	uv run python -m qdarktheme.widget_gallery
 
 ui-themes:
 	uv run python -c 'from PyQt6.QtWidgets import QStyleFactory; print(QStyleFactory.keys())'
+
+lang: lang-gen lang-comp
+
+lang-gen:
+	uv run pylupdate6 src/zagruz/*.py -ts src/translations/*.ts
+
+lang-comp:
+	# TODO: uv run lrelease src/translations/ru_RU.ts
+	/usr/lib/qt6/bin/lrelease src/translations/ru_RU.ts
 
 .PHONY: default init run build test ci-deps-linux package clean-build clean-venv clean widgets

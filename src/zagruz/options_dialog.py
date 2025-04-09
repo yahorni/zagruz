@@ -1,7 +1,9 @@
-from PyQt6.QtCore import Qt, QSettings
+from PyQt6.QtCore import QSettings, Qt
 from PyQt6.QtWidgets import (QApplication, QComboBox, QDialog, QFileDialog,
                              QFormLayout, QHBoxLayout, QLineEdit, QPushButton,
                              QStyle, QVBoxLayout, QWidget)
+
+from zagruz.options import format_options, theme_options
 
 
 class OptionsDialog(QDialog):
@@ -9,7 +11,7 @@ class OptionsDialog(QDialog):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setWindowTitle("Options")
+        self.setWindowTitle(self.tr("Options"))
         self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, False)
         self.setMinimumSize(500, 300)
 
@@ -21,24 +23,21 @@ class OptionsDialog(QDialog):
 
         # Language selection
         self.lang_combo = QComboBox()
-        self.lang_combo.addItems(["English", "Russian"])
-        form_layout.addRow("Language:", self.lang_combo)
+        self.lang_combo.addItems(["English", "Русский"])
+        self.lang_combo.setCurrentText(QSettings().value("language", "English", type=str))
+        form_layout.addRow(self.tr("Language:"), self.lang_combo)
 
         # Theme selection
         self.theme_combo = QComboBox()
-        self.theme_combo.addItems(["System", "Light", "Dark"])
-        self.theme_combo.setCurrentText(QSettings().value("theme", "System", type=str))
-        form_layout.addRow("Theme:", self.theme_combo)
+        self.theme_combo.addItems(theme_options.values)
+        self.theme_combo.setCurrentText(theme_options.selected_text)
+        form_layout.addRow(self.tr("Theme:"), self.theme_combo)
 
         # Format selection
         self.format_combo = QComboBox()
-        self.format_combo.addItems([
-            "Default (best)",
-            "TV (MP4, 480p)",
-            "Audio (MP3, 320kbps)"
-        ])
-        self.format_combo.setCurrentIndex(1)
-        form_layout.addRow("Download Format:", self.format_combo)
+        self.format_combo.addItems(format_options.values)
+        self.theme_combo.setCurrentText(format_options.selected_text)
+        form_layout.addRow(self.tr("Download Format:"), self.format_combo)
 
         # Directory selection
         dir_layout = QHBoxLayout()
@@ -46,18 +45,18 @@ class OptionsDialog(QDialog):
         self.dir_input.setReadOnly(True)
         self.dir_btn = QPushButton()
         self.dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon))
-        self.dir_btn.setToolTip("Choose download directory")
+        self.dir_btn.setToolTip(self.tr("Choose download directory"))
 
         dir_layout.addWidget(self.dir_input)
         dir_layout.addWidget(self.dir_btn)
-        form_layout.addRow("Download Directory:", dir_layout)
+        form_layout.addRow(self.tr("Download Directory:"), dir_layout)
 
         layout.addLayout(form_layout)
 
         # Dialog buttons
         button_box = QHBoxLayout()
-        self.save_btn = QPushButton("Save")
-        self.cancel_btn = QPushButton("Cancel")
+        self.save_btn = QPushButton(self.tr("Save"))
+        self.cancel_btn = QPushButton(self.tr("Cancel"))
         self.save_btn.setDefault(True)
 
         button_box.addWidget(self.save_btn)

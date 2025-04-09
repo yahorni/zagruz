@@ -69,7 +69,7 @@ class DownloadWorker(QThread):
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '320',
-            }] if "Audio" in self.format else [],
+            }] if self.format == "audio" else [],
             'logger': ProgressLogger(self.output),
             'progress_hooks': [progress_hook],
             # Disable ANSI escape codes at source
@@ -95,9 +95,9 @@ class DownloadWorker(QThread):
 
     def get_ytdlp_format(self) -> str | None:
         """Return yt-dlp format string based on selected preset"""
-        if self.format.startswith("TV"):
+        if self.format == "tv":
             return "bestvideo[vcodec^=avc][height<=480][ext=mp4]+bestaudio[ext=mp4]"
-        if self.format.startswith("Audio"):
+        if self.format == "audio":
             return "bestaudio"
         return None
 
@@ -106,7 +106,7 @@ class DownloadWorker(QThread):
         playlist_format = '%(playlist_index)s'
         title_format = '%(title)s.%(ext)s'
         if 'playlist?list' in self.url:
-            if self.format.startswith("Audio"):
+            if self.format == "audio":
                 return playlist_format + ". %(uploader)s - " + title_format
             else:
                 return playlist_format + ". " + title_format
