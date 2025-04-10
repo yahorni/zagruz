@@ -35,7 +35,8 @@ class _BaseOptions(QObject, metaclass=_TranslatableOptionsMeta):
 
     @property
     def selected(self) -> str:
-        return QSettings().value(self.section, self.default_key, type=str)
+        key = QSettings().value(self.section, self.default_key, type=str)
+        return key if self.is_valid(key) else self.default_key
 
     @selected.setter
     def selected(self, value: str) -> None:
