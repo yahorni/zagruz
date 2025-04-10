@@ -106,6 +106,16 @@
       <translation>Ошибка: Пожалуйста, выберите папку для скачивания</translation>
     </message>
     <message>
+      <location filename="../zagruz/zagruz.py" line="183" />
+      <source>Download completed successfully!</source>
+      <translation>Загрузка успешно завершена</translation>
+    </message>
+    <message>
+      <location filename="../zagruz/zagruz.py" line="185" />
+      <source>Download failed or interrupted</source>
+      <translation>Загрузка не удалась либо была прервана</translation>
+    </message>
+    <message>
       <location filename="../zagruz/zagruz.py" line="191" />
       <source>Download interrupted by user</source>
       <translation>Загрузка прервана пользователем</translation>
@@ -172,13 +182,13 @@
     </message>
     <message>
       <location filename="../zagruz/zagruz.py" line="295" />
-      <source>Unsupported language:</source>
-      <translation>Неподдерживаемый язык:</translation>
+      <source>Unsupported language: </source>
+      <translation>Неподдерживаемый язык: </translation>
     </message>
     <message>
       <location filename="../zagruz/zagruz.py" line="305" />
-      <source>Failed to load language:</source>
-      <translation>Не удалось загрузить язык:</translation>
+      <source>Failed to load language: </source>
+      <translation>Не удалось загрузить язык: </translation>
     </message>
   </context>
   <context>
@@ -227,17 +237,14 @@
   <context>
     <name>_FormatOptions</name>
     <message>
-      <location filename="../zagruz/options.py" line="13" />
       <source>Default (best)</source>
       <translation>По умолчанию (лучшее)</translation>
     </message>
     <message>
-      <location filename="../zagruz/options.py" line="14" />
       <source>TV (mp4, 480p)</source>
       <translation>ТВ (mp4, 480p)</translation>
     </message>
     <message>
-      <location filename="../zagruz/options.py" line="15" />
       <source>Audio (mp3, 320kbps)</source>
       <translation>Аудио (mp3, 320kbps)</translation>
     </message>
@@ -245,17 +252,14 @@
   <context>
     <name>_ThemeOptions</name>
     <message>
-      <location filename="../zagruz/options.py" line="52" />
       <source>System</source>
       <translation>Системная</translation>
     </message>
     <message>
-      <location filename="../zagruz/options.py" line="53" />
       <source>Light</source>
       <translation>Светлая</translation>
     </message>
     <message>
-      <location filename="../zagruz/options.py" line="54" />
       <source>Dark</source>
       <translation>Тёмная</translation>
     </message>

@@ -180,9 +180,9 @@ class DownloadApp(QMainWindow):
         """Handle download completion signal from worker thread"""
         self.download_btn.setEnabled(True)
         if success:
-            self.log_output.append("Download completed successfully!")
+            self.log_output.append(self.tr("Download completed successfully!"))
         else:
-            self.log_output.append("Download failed or interrupted")
+            self.log_output.append(self.tr("Download failed or interrupted"))
 
     def interrupt_download(self) -> None:
         """Stop the current download process if active"""
@@ -292,7 +292,7 @@ class DownloadApp(QMainWindow):
         """Load application translations"""
 
         if lang not in ("English", "Русский"):
-            self.log_output.append(self.tr("Unsupported language:"), lang)
+            self.log_output.append(self.tr("Unsupported language: ") + lang)
             return
 
         if lang == "English":
@@ -302,7 +302,8 @@ class DownloadApp(QMainWindow):
         locale = "ru_RU"
         # TODO: if not translator.load(locale, "translations"):
         if not self.translator.load(f"src/translations/{locale}.qm"):
-            self.log_output.append(self.tr("Failed to load language:"), lang)
+            self.log_output.append(self.tr("Failed to load language: ") + lang)
+            return
         QApplication.instance().installTranslator(self.translator)
 
 
