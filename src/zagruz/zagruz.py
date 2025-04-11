@@ -4,14 +4,14 @@ import sys
 from importlib.resources import files
 
 import qdarktheme
-from PyQt6.QtCore import QSettings, Qt, QTranslator, QUrl
+from PyQt6.QtCore import Qt, QTranslator, QUrl
 from PyQt6.QtGui import QAction, QDesktopServices
 from PyQt6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QStyle,
                              QTextEdit, QVBoxLayout, QWidget)
 
 from zagruz.download_worker import DownloadWorker
-from zagruz.options import format_options, theme_options
+from zagruz.options import format_options, theme_options, lang_options
 from zagruz.options_dialog import OptionsDialog
 from zagruz.update_worker import UpdateWorker
 
@@ -35,7 +35,7 @@ class DownloadApp(QMainWindow):
         if ui:
             self.init_ui()
             self.apply_theme(theme_options.selected)
-            self.apply_language(self.get_current_language())
+            self.apply_language(lang_options.selected)
             self.retranslateUi()
 
     def init_ui(self) -> None:
@@ -245,7 +245,7 @@ class DownloadApp(QMainWindow):
             self._update_download_directory(dialog.dir_input.text())
             self._update_format(format_options.from_value(dialog.format_combo.currentText()))
             self._update_theme(theme_options.from_value(dialog.theme_combo.currentText()))
-            self._update_language(dialog.lang_combo.currentText())
+            self._update_language(lang_options.from_value(dialog.lang_combo.currentText()))
 
     def _update_download_directory(self, new_dir: str) -> None:
         if new_dir != self.download_dir and new_dir and os.path.isdir(new_dir):
@@ -265,15 +265,10 @@ class DownloadApp(QMainWindow):
             self.log_output.append(self.tr("Theme changed to: ") + theme_options.selected_text)
 
     def _update_language(self, new_lang: str) -> None:
-        current_lang = self.get_current_language()
-        if new_lang != current_lang:
-            QSettings().setValue("language", new_lang)
+        if new_lang != lang_options.selected and lang_options.is_valid(new_lang):
             self.apply_language(new_lang)
             self.retranslateUi()
             self.log_output.append(self.tr("Language changed to: ") + new_lang)
-
-    def get_current_language(self) -> str:
-        return QSettings().value("language", "English", type=str)
 
     def retranslateUi(self) -> None:
         """Retranslate all UI elements"""
@@ -292,7 +287,7 @@ class DownloadApp(QMainWindow):
     def apply_language(self, lang: str) -> None:
         """Load application translations"""
 
-        if lang not in ("English", "Русский"):
+        if not lang_options.is_valid(lang):
             self.log_output.append(self.tr("Unsupported language: ") + lang)
             return
 

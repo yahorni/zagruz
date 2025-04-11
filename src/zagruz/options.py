@@ -90,5 +90,20 @@ class _ThemeOptions(_BaseOptions):
         }
 
 
+class _LangOptions(_BaseOptions):
+    def _get_section(self) -> str:
+        return "language"
+
+    def _get_default_key(self) -> str:
+        return "en_US"
+
+    def _get_raw_options(self) -> dict[str, str]:
+        return {
+            "en_US": "English",
+            "ru_RU": "Русский"
+        }
+
+
 format_options = _FormatOptions()
 theme_options = _ThemeOptions()
+lang_options = _LangOptions()

@@ -1,9 +1,9 @@
-from PyQt6.QtCore import QSettings, Qt
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QApplication, QComboBox, QDialog, QFileDialog,
                              QFormLayout, QHBoxLayout, QLineEdit, QPushButton,
                              QStyle, QVBoxLayout, QWidget)
 
-from zagruz.options import format_options, theme_options
+from zagruz.options import format_options, lang_options, theme_options
 
 
 class OptionsDialog(QDialog):
@@ -23,8 +23,8 @@ class OptionsDialog(QDialog):
 
         # Language selection
         self.lang_combo = QComboBox()
-        self.lang_combo.addItems(["English", "Русский"])
-        self.lang_combo.setCurrentText(QSettings().value("language", "English", type=str))
+        self.lang_combo.addItems(lang_options.values)
+        self.lang_combo.setCurrentText(lang_options.selected_text)
         form_layout.addRow(self.tr("Language:"), self.lang_combo)
 
         # Theme selection
