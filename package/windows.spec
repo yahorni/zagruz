@@ -10,7 +10,8 @@ a = Analysis(
     binaries=[],
     datas=[
         *collect_data_files('yt_dlp'),
-        ('../src/zagruz/translations/*.qm', 'translations')
+        ('../src/zagruz/translations/*.qm', 'translations'),
+        ('../assets/icon.ico', 'assets'),
     ],
     hiddenimports=[
         'yt_dlp.compat',
@@ -47,5 +48,5 @@ exe = EXE(
     runtime_tmpdir=None,
     console=False,
     disable_windowed_tracker=False,
-    # icon='../assets/icon.ico',
+    icon='../assets/icon.ico',
 )

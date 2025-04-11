@@ -10,17 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
     steps:
-      - name: Download Linux artifacts
+      - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: zagruz-linux
-          path: dist/linux
-
-      - name: Download Windows artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: zagruz-windows
-          path: dist/windows
+          path: dist/
+          merge-multiple: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -28,9 +22,8 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: "Version ${{ github.ref_name }}"
           body: "Automated release for zagruz ${{ github.ref_name }}"
-          files: |
-            dist/linux/linux/zagruz
-            dist/linux/wheel/*.whl
-            dist/windows/windows/zagruz.exe
+            dist/*.exe
+            dist/*
+            dist/*.whl
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, '-') }}

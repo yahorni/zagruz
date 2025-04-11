@@ -54,11 +54,15 @@ jobs:
     - name: Create package
       run: make package
 
-    - name: Upload artifacts
+    - name: Upload OS Artifact
       uses: actions/upload-artifact@v4
       with:
         name: zagruz-${{ matrix.artifact }}
-        path: |
-          dist/${{ matrix.artifact }}/*${{ matrix.ext }}
-          dist/wheel/*.whl
-        compression-level: 0
+        path: dist/*${{ matrix.ext }}
+
+    - name: Upload Wheel Artifact
+      if: runner.os == 'Linux'
+      uses: actions/upload-artifact@v4
+      with:
+        name: zagruz-wheel
+        path: dist/*.whl
