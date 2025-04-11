@@ -1,4 +1,4 @@
-name: Build packages
+name: Packages
 
 # jobs configuration guide: https://docs.astral.sh/uv/guides/integration/github/
 
@@ -44,13 +44,21 @@ jobs:
       if: runner.os == 'Linux'
       run: make ci-deps-linux
 
+    - name: Initialize dependencies
+      run: make init
+
+    - name: Build wheel (Linux)
+      if: runner.os == 'Linux'
+      run: make wheel
+
     - name: Create package
-      run: make init package
-      working-directory: ${{ github.workspace }}
+      run: make package
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: zagruz-${{ matrix.artifact }}
-        path: dist/${{ matrix.artifact }}/*${{ matrix.ext }}
+        path: |
+          dist/${{ matrix.artifact }}/*${{ matrix.ext }}
+          dist/wheel/*.whl
         compression-level: 0

@@ -11,23 +11,8 @@ default: init run
 init:
 	uv sync --all-extras
 
-build:
-	uv build
-
-test:
-	uv run python -m unittest discover -s tests -v
-
-ci-deps-linux:
-	sudo apt-get update
-	sudo apt-get install -y \
-	  libxcb-cursor0 \
-	  libxcb-keysyms1 \
-	  libxcb-render-util0 \
-	  libxcb-xkb1 \
-	  libxkbcommon-x11-0 \
-	  libxcb-icccm4 \
-	  libxcb-image0 \
-	  libxcb-shape0
+wheel:
+	uv build --wheel --out-dir dist/wheel/
 
 package:
 	uv run pyinstaller \
@@ -41,10 +26,13 @@ run:
 run-wheel:
 	@# on error: ModuleNotFoundError: No module named 'zagruz'
 	@# uv cache prune
-	cd dist && uvx zagruz-*.whl zagruz
+	uvx ./dist/wheel/zagruz-*.whl zagruz
 
 run-package:
 	./dist/$(platform)/$(executable)
+
+test:
+	uv run python -m unittest discover -s tests -v
 
 clean-build:
 	rm -rf build/ dist/
@@ -54,13 +42,7 @@ clean-venv:
 
 clean: clean-build clean-venv
 
-# utils
-
-ui-widgets:
-	uv run python -m qdarktheme.widget_gallery
-
-ui-themes:
-	uv run python -c 'from PyQt6.QtWidgets import QStyleFactory; print(QStyleFactory.keys())'
+# translations
 
 lang: lang-gen lang-comp
 
@@ -69,6 +51,27 @@ lang-gen:
 
 lang-comp:
 	@# TODO: uv run lrelease src/zagruz/translations/ru_RU.ts
+	@# currently PyQt6 doesn't provide lrelease binary
 	/usr/lib/qt6/bin/lrelease src/zagruz/translations/ru_RU.ts
+
+# utils
+
+ci-deps-linux:
+	sudo apt-get update
+	sudo apt-get install -y \
+	  libxcb-cursor0 \
+	  libxcb-keysyms1 \
+	  libxcb-render-util0 \
+	  libxcb-xkb1 \
+	  libxkbcommon-x11-0 \
+	  libxcb-icccm4 \
+	  libxcb-image0 \
+	  libxcb-shape0
+
+ui-widgets:
+	uv run python -m qdarktheme.widget_gallery
+
+ui-themes:
+	uv run python -c 'from PyQt6.QtWidgets import QStyleFactory; print(QStyleFactory.keys())'
 
 .PHONY: default init run build test ci-deps-linux package clean-build clean-venv clean widgets
