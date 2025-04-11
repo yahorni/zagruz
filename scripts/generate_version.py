@@ -9,7 +9,8 @@ def main():
         data = toml.load(f)
     version = data["project"]["version"]
 
-    version_file = Path("src/zagruz/_version.py")
+    # Use absolute path with consistent case
+    version_file = Path(__file__).parent.parent / "src" / "zagruz" / "_version.py"
     version_file.write_text(f'__version__ = "{version}"\n')
 
 

@@ -12,7 +12,7 @@ init:
 	uv sync --all-extras
 
 wheel:
-	uv build --wheel --out-dir dist/wheel/
+	uv build --wheel --out-dir ./dist/wheel/
 
 package:
 	uv run --with toml ./scripts/generate_version.py

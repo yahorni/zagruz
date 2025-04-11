@@ -2,10 +2,11 @@ import os
 import re
 import sys
 from importlib.resources import files
+from pathlib import Path
 
 import qdarktheme
 from PyQt6.QtCore import Qt, QTranslator, QUrl
-from PyQt6.QtGui import QAction, QDesktopServices
+from PyQt6.QtGui import QAction, QDesktopServices, QIcon
 from PyQt6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QStyle,
                              QTextEdit, QVBoxLayout, QWidget)
@@ -341,12 +342,25 @@ class DownloadApp(QMainWindow):
         QApplication.instance().installTranslator(self.translator)
 
 
+def get_resource_path(relative_path: str) -> str:
+    """Get absolute path to resource, works for dev and for PyInstaller."""
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        # PyInstaller bundle mode
+        base_path = Path(sys._MEIPASS)
+    else:
+        # Normal development mode
+        base_path = Path(__file__).parent.parent.parent
+
+    return str(base_path / relative_path)
+
+
 def main() -> None:
     """Main entry point for the zagruz application"""
     qdarktheme.enable_hi_dpi()
     app = QApplication(sys.argv)
     app.setOrganizationName("zagruz")
     app.setApplicationName("zagruz")
+    app.setWindowIcon(QIcon(get_resource_path("assets/icon.ico")))
     if sys.platform == "win32":
         app.setStyle("Windows")
     window = DownloadApp()
