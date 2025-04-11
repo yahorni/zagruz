@@ -90,7 +90,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: "zagruz ${{ github.ref_name }}"
           files: |
-            dist/zagruz
-            dist/zagruz.exe
+            dist/zagruz-linux
+            dist/zagruz-win.exe
             dist/zagruz-*.whl
           generate_release_notes: true
