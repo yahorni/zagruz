@@ -10,8 +10,9 @@ from PyQt6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QStyle,
                              QTextEdit, QVBoxLayout, QWidget)
 
+from zagruz import __version__
 from zagruz.download_worker import DownloadWorker
-from zagruz.options import format_options, theme_options, lang_options
+from zagruz.options import format_options, lang_options, theme_options
 from zagruz.options_dialog import OptionsDialog
 from zagruz.update_worker import UpdateWorker
 
@@ -89,16 +90,25 @@ class DownloadApp(QMainWindow):
         # self.log_output.setPlaceholderText(self.tr("Log output will appear here..."))
         self.log_output.setReadOnly(True)
 
+        # Version and quit hint
+        bottom_layout = QHBoxLayout()
+
+        version_label = QLabel(f"v{__version__}")
+        version_label.setStyleSheet("font-style: italic; color: #666;")
+        version_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
+
+        hint_label = QLabel(self.tr("Hint: Press Ctrl+Q to quit"))
+        hint_label.setStyleSheet("font-style: italic;")
+        hint_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+
+        bottom_layout.addWidget(version_label)
+        bottom_layout.addWidget(hint_label)
+
         # Assemble layout
         layout.addLayout(url_line)
         layout.addLayout(button_line)
         layout.addWidget(self.log_output)
-
-        # Quit shortcut hint
-        hint_label = QLabel(self.tr("Hint: Press Ctrl+Q to quit"))
-        hint_label.setStyleSheet("font-style: italic;")
-        hint_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
-        layout.addWidget(hint_label)
+        layout.addLayout(bottom_layout)
 
         # Connect buttons (placeholder functions)
         self.download_btn.clicked.connect(self.start_download)
@@ -280,9 +290,9 @@ class DownloadApp(QMainWindow):
         self.open_dir_btn.setText(self.tr(" Open"))
         self.options_btn.setText(self.tr(" Options"))
         self.log_output.setPlaceholderText(self.tr("Log output will appear here..."))
-        hint_label = self.findChild(QLabel)
-        if hint_label:
-            hint_label.setText(self.tr("Hint: Press Ctrl+Q to quit"))
+        for widget in self.findChildren(QLabel):
+            if widget.text().startswith("Hint:"):
+                widget.setText(self.tr("Hint: Press Ctrl+Q to quit"))
 
     def apply_language(self, lang: str) -> None:
         """Load application translations"""

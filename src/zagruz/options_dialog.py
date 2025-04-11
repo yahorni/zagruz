@@ -36,7 +36,7 @@ class OptionsDialog(QDialog):
         # Format selection
         self.format_combo = QComboBox()
         self.format_combo.addItems(format_options.values)
-        self.theme_combo.setCurrentText(format_options.selected_text)
+        self.format_combo.setCurrentText(format_options.selected_text)
         form_layout.addRow(self.tr("Download Format:"), self.format_combo)
 
         # Directory selection

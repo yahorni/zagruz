@@ -15,17 +15,19 @@ wheel:
 	uv build --wheel --out-dir dist/wheel/
 
 package:
+	uv run --with toml ./scripts/generate_version.py
 	uv run pyinstaller \
 		--noconfirm \
 		--distpath dist/$(platform) \
 		package/$(platform).spec
+	rm -f ./src/zagruz/_version.py
 
 run:
 	uv run zagruz
 
 run-wheel:
-	@# on error: ModuleNotFoundError: No module named 'zagruz'
-	@# uv cache prune
+	@# sometimes old version of wheel is taken from cache
+	@# to remove it run: make clean-cache
 	uvx ./dist/wheel/zagruz-*.whl zagruz
 
 run-package:
@@ -33,6 +35,9 @@ run-package:
 
 test:
 	uv run python -m unittest discover -s tests -v
+
+clean-cache:
+	uv cache prune
 
 clean-build:
 	rm -rf build/ dist/
@@ -74,4 +79,4 @@ ui-widgets:
 ui-themes:
 	uv run python -c 'from PyQt6.QtWidgets import QStyleFactory; print(QStyleFactory.keys())'
 
-.PHONY: default init run build test ci-deps-linux package clean-build clean-venv clean widgets
+.PHONY: default init wheel package run run-wheel run-package test clean-build clean-cache clean-venv clean lang lang-gen lang-comp ci-deps-linux ui-widgets ui-themes

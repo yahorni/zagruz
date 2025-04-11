@@ -18,7 +18,7 @@ a = Analysis(
         'yt_dlp.extractor',
         'PyQt6.QtCore',
         'PyQt6.QtGui',
-        'PyQt6.QtWidgets'
+        'PyQt6.QtWidgets',
     ],
     hookspath=[],
     hooksconfig={},

@@ -5,18 +5,10 @@
 
 A cross-platform GUI frontend for yt-dlp featuring:
 
-- Multi-site URL support via yt-dlp
-- Directory selection
-- Real-time download logging
-- Keyboard shortcuts
-- Download progress monitoring
-
-## Features
-
-- Clean PyQt6 interface
-- Smart URL validation
-- Download interruption support
-- Cross-platform compatibility
+- **Presets**: TV (480p MP4), Audio (320kbps MP3), Best Quality
+- **Theme Support**: System/Light/Dark modes with DPI scaling
+- **Localization**: English & Russian interface
+- **Update System**: Built-in FFmpeg updater
 
 ## Usage
 
@@ -78,15 +70,17 @@ make clean init package run-package
   - [x] Selected theme
   - [x] Selected language
   - [x] Download directory persistence between sessions
-- [ ] Ffmpeg executable
-  - [x] Download with "Update" button
-  - [ ] Startup availability check
-  - [ ] Use downloaded binary without app restart
-- [ ] Implement Github releases
-  - [ ] Make "Update" button to update the app with last github release
-- [ ] Configurable download formats
-- [ ] Progress bar instead of `[download]` log spamming
-- [ ] Add automated tests for download interruption/resumption
+- [ ] Ffmpeg integration
+  - [x] Manual updater
+  - [ ] Startup validation
+  - [ ] Hot-reload without restart
+- [ ] Update system
+  - [ ] Application updates via GitHub
+  - [ ] Change log display
+- [ ] Quality-of-life improvements
+  - [ ] Progress bar visualization
+  - [ ] Preset customization
+- [ ] Automated testing for download interruption/resumption
 
 ## License
 
