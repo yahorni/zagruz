@@ -46,6 +46,19 @@ make package
 make clean
 ```
 
+## Development
+
+```bash
+# run dev
+make clean init run
+
+# run wheel
+make clean init build run-wheel
+
+# run package
+make clean init package run-package
+```
+
 ## Dependencies
 
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Video download backend (supports 1000+ sites)
@@ -57,14 +70,14 @@ make clean
 - [x] Binary package for linux/windows
 - [x] Implement CI/CD pipeline with GitHub Actions
 - [x] Preconfigured profiles of yt-dlp ("best", "tv", "audio",...)
-- [ ] "Options" button + window
+- [x] "Options" button + window
   - [x] Add dark/light theme toggle
   - [x] Download directory selection
-  - [ ] Russian language support
-- [ ] Configuration file (QSettings)
+  - [x] Russian language support
+- [x] Configuration file (QSettings)
   - [x] Selected theme
-  - [ ] Selected language
-  - [ ] Download directory persistence between sessions
+  - [x] Selected language
+  - [x] Download directory persistence between sessions
 - [ ] Ffmpeg executable
   - [x] Download with "Update" button
   - [ ] Startup availability check

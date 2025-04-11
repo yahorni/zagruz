@@ -11,9 +11,6 @@ default: init run
 init:
 	uv sync --all-extras
 
-run:
-	uv run zagruz
-
 build:
 	uv build
 
@@ -38,6 +35,14 @@ package:
 		--distpath dist/$(platform) \
 		package/$(platform).spec
 
+run:
+	uv run zagruz
+
+run-wheel:
+	@# on error: ModuleNotFoundError: No module named 'zagruz'
+	@# uv cache prune
+	cd dist && uvx zagruz-*.whl zagruz
+
 run-package:
 	./dist/$(platform)/$(executable)
 
@@ -60,10 +65,10 @@ ui-themes:
 lang: lang-gen lang-comp
 
 lang-gen:
-	uv run pylupdate6 src/zagruz/*.py -ts src/translations/*.ts
+	uv run pylupdate6 src/zagruz/*.py -ts src/zagruz/translations/*.ts
 
 lang-comp:
-	# TODO: uv run lrelease src/translations/ru_RU.ts
-	/usr/lib/qt6/bin/lrelease src/translations/ru_RU.ts
+	@# TODO: uv run lrelease src/zagruz/translations/ru_RU.ts
+	/usr/lib/qt6/bin/lrelease src/zagruz/translations/ru_RU.ts
 
 .PHONY: default init run build test ci-deps-linux package clean-build clean-venv clean widgets

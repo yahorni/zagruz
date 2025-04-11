@@ -8,7 +8,10 @@ a = Analysis(
     ['../src/zagruz/zagruz.py'],
     pathex=[],
     binaries=[],
-    datas=collect_data_files('yt_dlp'),
+    datas=[
+        *collect_data_files('yt_dlp'),
+        ('../src/zagruz/translations/*.qm', 'translations')
+    ],
     hiddenimports=[
         'yt_dlp.compat',
         'yt_dlp.downloader',

@@ -1,9 +1,10 @@
 import os
 import re
 import sys
+from importlib.resources import files
 
 import qdarktheme
-from PyQt6.QtCore import Qt, QTranslator, QUrl, QSettings
+from PyQt6.QtCore import QSettings, Qt, QTranslator, QUrl
 from PyQt6.QtGui import QAction, QDesktopServices
 from PyQt6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QStyle,
@@ -300,10 +301,38 @@ class DownloadApp(QMainWindow):
             return
 
         locale = "ru_RU"
-        # TODO: if not translator.load(locale, "translations"):
-        if not self.translator.load(f"src/translations/{locale}.qm"):
+        resource_path = None
+
+        # Try different resource locations
+        if getattr(sys, 'frozen', False):
+            # PyInstaller bundled executable
+            base_path = getattr(sys, '_MEIPASS', os.path.dirname(sys.executable))
+            bundled_path = os.path.join(base_path, 'translations', f"{locale}.qm")
+            if os.path.exists(bundled_path):
+                resource_path = bundled_path
+        else:
+            # Development mode using package resources
+            try:
+                resource_path = files("zagruz.translations").joinpath(f"{locale}.qm")
+                if not resource_path.is_file():
+                    resource_path = None
+            except Exception:
+                pass
+
+        # Fallback to relative path
+        if not resource_path:
+            local_path = os.path.join(os.path.dirname(__file__), 'translations', f"{locale}.qm")
+            if os.path.exists(local_path):
+                resource_path = local_path
+
+        if not resource_path or not os.path.exists(resource_path):
+            self.log_output.append(self.tr("Failed to find language file: ") + lang)
+            return
+
+        if not self.translator.load(str(resource_path)):
             self.log_output.append(self.tr("Failed to load language: ") + lang)
             return
+
         QApplication.instance().installTranslator(self.translator)
 
 
