@@ -6,7 +6,7 @@ from importlib.resources import files
 from pathlib import Path
 
 import qdarktheme
-from PyQt6.QtCore import Qt, QTranslator, QUrl, QSettings
+from PyQt6.QtCore import Qt, QTranslator, QUrl, QSettings, QStandardPaths
 from PyQt6.QtGui import QAction, QDesktopServices, QIcon
 from PyQt6.QtWidgets import (QApplication, QCheckBox, QDialog,
                              QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
@@ -35,7 +35,8 @@ class DownloadApp(QMainWindow):
         self.translator = QTranslator()
         self.update_in_progress: bool = False
 
-        self.download_dir: str = os.getcwd()
+        default_download_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DownloadLocation)
+        self.download_dir = QSettings().value("download_dir", default_download_dir, type=str)
         self.download_thread: VideoDownloader | None = None
         self.update_thread: AppUpdater | None = None
 
@@ -345,6 +346,7 @@ class DownloadApp(QMainWindow):
         if new_dir != self.download_dir and new_dir and os.path.isdir(new_dir):
             self.download_dir = new_dir
             self.log_output.append(self.tr("Download directory updated to: ") + new_dir)
+            QSettings().setValue("download_dir", new_dir)
 
     def _update_format(self, new_format: str) -> None:
         if new_format != format_options.selected and format_options.is_valid(new_format):
