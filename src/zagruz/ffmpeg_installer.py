@@ -30,18 +30,9 @@ class FFmpegInstaller(BaseDownloader):
 
         self.archive_name = f"{self.ffmpeg_build}.{self.archive_type}"
 
-    def _is_ffmpeg_installed(self) -> bool:
-        """Check if FFmpeg is already installed and accessible"""
-        return bool(shutil.which('ffmpeg'))
-
     @override
     def run(self) -> None:
         """Main FFmpeg install logic"""
-        if self._is_ffmpeg_installed():
-            self.output.emit(self.tr("[ffmpeg] FFmpeg is already installed"))
-            self.finished.emit(True)
-            return
-
         self.output.emit(self.tr("[ffmpeg] Starting download..."))
         try:
             with self._temp_dir() as tmpdir:

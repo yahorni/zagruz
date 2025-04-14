@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import shutil
 from importlib.resources import files
 from pathlib import Path
 
@@ -123,6 +124,9 @@ class DownloadApp(QMainWindow):
         self.ffmpeg_btn.clicked.connect(self.install_ffmpeg)
         self.open_dir_btn.clicked.connect(self.open_directory)
         self.options_btn.clicked.connect(self.show_options)
+        
+        # Set initial FFmpeg button visibility
+        self.ffmpeg_btn.setVisible(not self._is_ffmpeg_installed())
 
         # Window settings
         self.setGeometry(100, 100, 600, 400)
@@ -246,6 +250,10 @@ class DownloadApp(QMainWindow):
         # Use Qt's platform-agnostic URL opening
         QDesktopServices.openUrl(QUrl.fromLocalFile(self.download_dir))
 
+    def _is_ffmpeg_installed(self) -> bool:
+        """Check if FFmpeg is already installed and accessible"""
+        return bool(shutil.which('ffmpeg'))
+
     def update_app(self) -> None:
         """Start application update in a background thread"""
         if self.update_thread and self.update_thread.isRunning():
@@ -287,6 +295,7 @@ class DownloadApp(QMainWindow):
         self.ffmpeg_btn.setEnabled(True)
         if success:
             self.log_output.append(self.tr("FFmpeg update completed!"))
+            self.ffmpeg_btn.setVisible(False)
         else:
             self.log_output.append(self.tr("FFmpeg update failed"))
 
