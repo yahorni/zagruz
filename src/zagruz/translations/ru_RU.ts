@@ -4,49 +4,64 @@
   <context>
     <name>AppUpdater</name>
     <message>
-      <location filename="../app_updater.py" line="27" />
+      <location filename="../app_updater.py" line="26" />
       <source>[update] Starting app update...</source>
       <translation>[update] Обновление приложения...</translation>
     </message>
     <message>
-      <location filename="../app_updater.py" line="47" />
+      <location filename="../app_updater.py" line="35" />
+      <source>[update] Downloading update from </source>
+      <translation>[update] Загрузка обновления из </translation>
+    </message>
+    <message>
+      <location filename="../app_updater.py" line="38" />
+      <source>[update] Installing app...</source>
+      <translation>[ffmpeg] Установка приложения...</translation>
+    </message>
+    <message>
+      <location filename="../app_updater.py" line="43" />
+      <source>[update] Error: </source>
+      <translation>[update] Ошибка: </translation>
+    </message>
+    <message>
+      <location filename="../app_updater.py" line="60" />
       <source>[update] Checking for updates...</source>
       <translation>[update] Проверка обновлений...</translation>
     </message>
     <message>
-      <location filename="../app_updater.py" line="54" />
+      <location filename="../app_updater.py" line="65" />
       <source>[update] Development version detected </source>
       <translation>[update] Обнаружена development версия</translation>
     </message>
     <message>
-      <location filename="../app_updater.py" line="57" />
+      <location filename="../app_updater.py" line="68" />
       <source>[update] Already up-to-date</source>
       <translation>[update] Последняя версия уже установлена</translation>
     </message>
     <message>
-      <location filename="../app_updater.py" line="60" />
+      <location filename="../app_updater.py" line="71" />
       <source>[update] Found update: </source>
       <translation>[update] Найдено обновление: </translation>
     </message>
     <message>
-      <location filename="../app_updater.py" line="70" />
-      <source>[update] Downloading update...</source>
-      <translation>[update] Загрузка обновления...</translation>
-    </message>
-    <message>
-      <location filename="../app_updater.py" line="84" />
+      <location filename="../app_updater.py" line="85" />
       <source>Invalid update package structure</source>
       <translation>Некорректная структура пакета обновления</translation>
     </message>
     <message>
-      <location filename="../app_updater.py" line="98" />
+      <location filename="../app_updater.py" line="91" />
+      <source>[update] Downloading... </source>
+      <translation>[update] Загрузка... </translation>
+    </message>
+    <message>
+      <location filename="../app_updater.py" line="97" />
       <source>Updated binary not found</source>
       <translation>Обновлённый бинарник не найден</translation>
     </message>
     <message>
-      <location filename="../app_updater.py" line="101" />
-      <source>[update] Update complete. Restart application</source>
-      <translation>[update] Обновление завершено. Перезапустите приложение</translation>
+      <location filename="../app_updater.py" line="103" />
+      <source>[update] Update complete. New binary installed as </source>
+      <translation>[update] Обновление завершено. Новое приложение установлено как </translation>
     </message>
   </context>
   <context>
@@ -257,51 +272,56 @@ Would you like to install it now?</source>
     <name>FFmpegInstaller</name>
     <message>
       <location filename="../ffmpeg_installer.py" line="36" />
-      <source>[ffmpeg] Starting download...</source>
-      <translation>[ffmpeg] Начало загрузки...</translation>
+      <source>[ffmpeg] Starting ffmpeg installation...</source>
+      <translation>[ffmpeg] Установка ffmpeg...</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="40" />
+      <location filename="../ffmpeg_installer.py" line="41" />
       <source>[ffmpeg] Downloading FFmpeg from </source>
       <translation>[ffmpeg] Загрузка FFmpeg из </translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="43" />
+      <location filename="../ffmpeg_installer.py" line="44" />
       <source>[ffmpeg] Extracting archive...</source>
       <translation>[ffmpeg] Распаковка архива...</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="46" />
+      <location filename="../ffmpeg_installer.py" line="47" />
       <source>[ffmpeg] Installing FFmpeg...</source>
       <translation>[ffmpeg] Установка FFmpeg...</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="65" />
+      <location filename="../ffmpeg_installer.py" line="52" />
+      <source>[ffmpeg] Error: </source>
+      <translation>[ffmpeg] Ошибка: </translation>
+    </message>
+    <message>
+      <location filename="../ffmpeg_installer.py" line="68" />
       <source>[ffmpeg] Downloading... </source>
       <translation>[ffmpeg] Загрузка... </translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="71" />
+      <location filename="../ffmpeg_installer.py" line="74" />
       <source>FFmpeg binary not found in download package</source>
       <translation>Бинарный файл FFmpeg не найден в пакете</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="77" />
+      <location filename="../ffmpeg_installer.py" line="80" />
       <source>[ffmpeg] Installing to: </source>
       <translation>[ffmpeg] Установка в: </translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="83" />
+      <location filename="../ffmpeg_installer.py" line="86" />
       <source>Could not remove old FFmpeg: </source>
       <translation>Не удалось удалить старый FFmpeg: </translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="87" />
+      <location filename="../ffmpeg_installer.py" line="90" />
       <source>[ffmpeg] FFmpeg installed successfully</source>
       <translation>[ffmpeg] FFmpeg успешно установлен</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="91" />
+      <location filename="../ffmpeg_installer.py" line="94" />
       <source>[ffmpeg] Set executable permissions</source>
       <translation>[ffmpeg] Установлены права на выполнение</translation>
     </message>

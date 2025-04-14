@@ -1,13 +1,14 @@
 # vim: ft=python
 
+from importlib.metadata import version
+
 from PyInstaller.utils.hooks import collect_data_files
 
-block_cipher = None
+pkg_version = version('zagruz')
 
 a = Analysis(
     ['../src/zagruz/zagruz.py'],
-    pathex=[],
-    binaries=[],
+
     datas=[
         *collect_data_files('yt_dlp'),
         ('../src/zagruz/translations/*.qm', 'translations'),
@@ -20,17 +21,9 @@ a = Analysis(
         'PyQt6.QtCore',
         'PyQt6.QtGui',
         'PyQt6.QtWidgets',
-    ],
-    hookspath=[],
-    hooksconfig={},
-    runtime_hooks=[],
-    excludes=[],
-    win_no_prefer_redirects=False,
-    win_private_assemblies=False,
-    cipher=block_cipher,
-    noarchive=False,
+    ]
 )
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+pyz = PYZ(a.pure, a.zipped_data)
 
 exe = EXE(
     pyz,
@@ -38,15 +31,8 @@ exe = EXE(
     a.binaries,
     a.zipfiles,
     a.datas,
-    [],
     name='zagruz-win.exe',
-    debug=False,
-    bootloader_ignore_signals=False,
-    strip=False,
     upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
     console=False,
-    disable_windowed_tracker=False,
     icon='../assets/icon.ico',
 )

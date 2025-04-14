@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import sys
 import tarfile
 import zipfile
@@ -17,8 +18,6 @@ class AppUpdater(BaseDownloader):
 
     def __init__(self) -> None:
         super().__init__()
-        self.binary_name = "zagruz-linux" if sys.platform == "linux" else "zagruz-win.exe"
-        self.expected_name = self.binary_name
         self.downloader.download_progress.connect(self._handle_download_progress)
 
     @override
@@ -27,29 +26,41 @@ class AppUpdater(BaseDownloader):
         self.output.emit(self.tr("[update] Starting app update..."))
         try:
             with self._temp_dir() as tmpdir:
-                with urlopen("https://api.github.com/repos/yahorni/zagruz/releases/latest", timeout=15) as response:
-                    data = json.load(response)
+                latest_version, download_url, download_name = self.get_release_metadata()
 
-                if not self.is_update_available(data):
+                if not self.is_update_available(latest_version):
                     self.finished.emit(True)
                     return
 
-                download_path = self.download(tmpdir, data)
-                extracted_dir = self.extract(download_path, tmpdir)
-                self.install(extracted_dir)
+                self.output.emit(self.tr("[update] Downloading update from ") + f"'{download_url}'")
+                download_path = self.downloader.download_file(download_url, os.path.join(tmpdir, download_name))
+
+                self.output.emit(self.tr("[update] Installing app..."))
+                self.install(download_path)
+
                 self.finished.emit(True)
         except Exception as e:
-            self.output.emit(f"[update] Error: {str(e)}")
+            self.output.emit(self.tr("[update] Error: ") + str(e))
             self.finished.emit(False)
 
-    def is_update_available(self, data) -> bool:
+    def get_release_metadata(self) -> (str, str):
+        with urlopen("https://api.github.com/repos/yahorni/zagruz/releases/latest", timeout=15) as response:
+            data = json.load(response)
+
+        latest_version = data["tag_name"].lstrip('v')
+        asset = next(a for a in data["assets"] if
+                     ("windows" in a["name"].lower() and sys.platform == "win32") or
+                     ("linux" in a["name"].lower() and sys.platform == "linux"))
+        download_url = asset["browser_download_url"]
+        download_name = asset["name"]
+        return latest_version, download_url, download_name
+
+    def is_update_available(self, latest_version: str) -> bool:
         """Check for available updates"""
         self.output.emit(self.tr("[update] Checking for updates..."))
 
-        latest_version = data["tag_name"].lstrip('v')
         current_v = version.parse(__version__)
         latest_v = version.parse(latest_version)
-
         if current_v > latest_v:
             self.output.emit(self.tr("[update] Development version detected "))
             return False
@@ -59,16 +70,6 @@ class AppUpdater(BaseDownloader):
 
         self.output.emit(self.tr("[update] Found update: ") + latest_version)
         return True
-
-    def download(self, tmpdir: str, data) -> str:
-        """Download latest app version"""
-        asset = next(a for a in data["assets"] if
-                     ("windows" in a["name"].lower() and sys.platform == "win32") or
-                     ("linux" in a["name"].lower() and sys.platform == "linux"))
-        download_url = asset["browser_download_url"]
-
-        self.output.emit(self.tr("[update] Downloading update..."))
-        return self.downloader.download_file(download_url, os.path.join(tmpdir, asset["name"]))
 
     def extract(self, archive_path: str, tmpdir: str) -> str:
         """Extract the downloaded package"""
@@ -87,15 +88,16 @@ class AppUpdater(BaseDownloader):
 
     def _handle_download_progress(self, percent: int, speed_mb: float, elapsed: float) -> None:
         """Handle download progress updates"""
-        self.output.emit(self.tr(f"[update] Downloading... {percent}% ({speed_mb:.2f} MB/s, {elapsed:.1f}s)"))
+        self.output.emit(self.tr("[update] Downloading... ") + f"{percent}% ({speed_mb:.2f} MB/s, {elapsed:.1f}s)")
 
-    def install(self, extracted_dir: str) -> None:
+    def install(self, new_exe_path: str) -> None:
         """Replace current executable with updated version"""
-        current_exe = sys.executable
-        new_exe_path = os.path.join(extracted_dir, self.expected_name)
 
         if not os.path.exists(new_exe_path):
             raise FileNotFoundError(self.tr("Updated binary not found"))
 
-        os.replace(new_exe_path, current_exe)
-        self.output.emit(self.tr("[update] Update complete. Restart application"))
+        dest_dir = os.path.dirname(sys.executable)
+        new_exe_name = os.path.basename(new_exe_path)
+        dest_path = os.path.join(dest_dir, new_exe_name)
+        shutil.move(new_exe_path, dest_path)
+        self.output.emit(self.tr("[update] Update complete. New binary installed as ") + f"'{new_exe_name}'. ")

@@ -33,25 +33,26 @@ class FFmpegInstaller(BaseDownloader):
     @override
     def run(self) -> None:
         """Main FFmpeg install logic"""
-        self.output.emit(self.tr("[ffmpeg] Starting download..."))
+        self.output.emit(self.tr("[ffmpeg] Starting ffmpeg installation..."))
         try:
             with self._temp_dir() as tmpdir:
-                url = self.base_url + self.archive_name
-                self.output.emit(self.tr("[ffmpeg] Downloading FFmpeg from ") + f"'{url}'")
-                download_path = self.downloader.download_file(url, os.path.join(tmpdir, self.archive_name))
+                download_url = self.base_url + self.archive_name
+
+                self.output.emit(self.tr("[ffmpeg] Downloading FFmpeg from ") + f"'{download_url}'")
+                download_path = self.downloader.download_file(download_url, os.path.join(tmpdir, self.archive_name))
 
                 self.output.emit(self.tr("[ffmpeg] Extracting archive..."))
-                self._extract_archive(download_path, tmpdir)
+                extracted_path = self.extract(download_path, tmpdir)
 
                 self.output.emit(self.tr("[ffmpeg] Installing FFmpeg..."))
-                self._install_binary(os.path.join(tmpdir, self.ffmpeg_build))
+                self.install(extracted_path)
 
                 self.finished.emit(True)
         except Exception as e:
-            self.output.emit("[ffmpeg] Error: " + str(e))
+            self.output.emit(self.tr("[ffmpeg] Error: ") + str(e))
             self.finished.emit(False)
 
-    def _extract_archive(self, archive_path: str, tmpdir: str) -> None:
+    def extract(self, archive_path: str, tmpdir: str) -> str:
         """Extract downloaded FFmpeg archive"""
         if self.archive_type == "zip":
             with zipfile.ZipFile(archive_path) as zip_ref:
@@ -60,11 +61,13 @@ class FFmpegInstaller(BaseDownloader):
             with tarfile.open(archive_path, "r:xz") as tar:
                 tar.extractall(tmpdir)
 
+        return os.path.join(tmpdir, self.ffmpeg_build)
+
     def _handle_download_progress(self, percent: int, speed_mb: float, elapsed: float) -> None:
         """Handle download progress updates"""
         self.output.emit(self.tr("[ffmpeg] Downloading... ") + f"{percent}% ({speed_mb:.2f} MB/s, {elapsed:.1f}s)")
 
-    def _install_binary(self, extracted_dir: str) -> None:
+    def install(self, extracted_dir: str) -> None:
         """Install the FFmpeg binary to system location"""
         src_path = os.path.join(extracted_dir, "bin", self.binary_name)
         if not os.path.exists(src_path):

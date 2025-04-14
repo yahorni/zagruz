@@ -1,4 +1,4 @@
-name: Package/Release
+name: Packages
 
 # Builds platform-specific binaries and Python wheels, publishes GitHub releases
 # Configuration reference: https://docs.astral.sh/uv/guides/integration/github/
@@ -90,7 +90,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: "zagruz ${{ github.ref_name }}"
           files: |
-            dist/zagruz-linux
-            dist/zagruz-win.exe
+            dist/zagruz-linux-*
+            dist/zagruz-win-*.exe
             dist/zagruz-*.whl
           generate_release_notes: true
