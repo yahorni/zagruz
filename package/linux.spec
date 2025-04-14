@@ -44,7 +44,7 @@ exe = EXE(
     a.binaries,
     a.zipfiles,
     a.datas,
-    name='zagruz-linux-' + pkg_version,
+    name=f'zagruz-linux-{pkg_version}',
     upx=True,
     console=False,
     disable_windowed_tracker=True,

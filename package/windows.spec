@@ -31,7 +31,7 @@ exe = EXE(
     a.binaries,
     a.zipfiles,
     a.datas,
-    name='zagruz-win.exe',
+    name=f'zagruz-win-{pkg_version}.exe',
     upx=True,
     console=False,
     icon='../assets/icon.ico',
