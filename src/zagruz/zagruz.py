@@ -12,10 +12,11 @@ from PyQt6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
                              QTextEdit, QVBoxLayout, QWidget)
 
 from zagruz import __version__
-from zagruz.download_worker import DownloadWorker
+from zagruz.video_downloader import VideoDownloader
 from zagruz.options import format_options, lang_options, theme_options
 from zagruz.options_dialog import OptionsDialog
-from zagruz.update_worker import UpdateWorker
+from zagruz.app_updater import AppUpdater
+from zagruz.ffmpeg_installer import FFmpegInstaller
 
 
 class DownloadApp(QMainWindow):
@@ -30,9 +31,11 @@ class DownloadApp(QMainWindow):
         super().__init__()
 
         self.translator = QTranslator()
+        self.update_in_progress: bool = False
 
         self.download_dir: str = os.getcwd()
-        self.download_thread: DownloadWorker | None = None
+        self.download_thread: VideoDownloader | None = None
+        self.update_thread: AppUpdater | None = None
 
         if ui:
             self.init_ui()
@@ -57,18 +60,20 @@ class DownloadApp(QMainWindow):
         self.download_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton))
         self.download_btn.setToolTip(self.tr("Download video/audio"))
         self.download_btn.setDefault(True)
-
-        self.interrupt_btn: QPushButton = QPushButton(self.tr(" Interrupt"))
-        self.interrupt_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton))
-        self.interrupt_btn.setToolTip(self.tr("Interrupt current download"))
+        self.download_btn.setCheckable(True)
+        self.download_btn.clicked.connect(self.toggle_download_action)
 
         self.update_btn: QPushButton = QPushButton(self.tr(" Update"))
         self.update_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload))
-        self.update_btn.setToolTip(self.tr("Update application and/or FFmpeg"))
+        self.update_btn.setToolTip(self.tr("Update application"))
 
         self.open_dir_btn: QPushButton = QPushButton(self.tr(" Open"))
         self.open_dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
         self.open_dir_btn.setToolTip(self.tr("Open download directory"))
+
+        self.ffmpeg_btn: QPushButton = QPushButton(" FFmpeg")
+        self.ffmpeg_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_ComputerIcon))
+        self.ffmpeg_btn.setToolTip(self.tr("Install FFmpeg binary"))
 
         self.options_btn: QPushButton = QPushButton(self.tr(" Options"))
         self.options_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
@@ -81,14 +86,13 @@ class DownloadApp(QMainWindow):
         # Create new button line below URL input
         button_line = QHBoxLayout()
         button_line.addWidget(self.download_btn)
-        button_line.addWidget(self.interrupt_btn)
         button_line.addWidget(self.update_btn)
         button_line.addWidget(self.open_dir_btn)
+        button_line.addWidget(self.ffmpeg_btn)
         button_line.addWidget(self.options_btn)
 
         # Log output area
         self.log_output: QTextEdit = QTextEdit()
-        # self.log_output.setPlaceholderText(self.tr("Log output will appear here..."))
         self.log_output.setReadOnly(True)
 
         # Version and quit hint
@@ -111,15 +115,16 @@ class DownloadApp(QMainWindow):
         layout.addWidget(self.log_output)
         layout.addLayout(bottom_layout)
 
+        # State tracking for download button
+        self.is_downloading: bool = False
+
         # Connect buttons (placeholder functions)
-        self.download_btn.clicked.connect(self.start_download)
-        self.interrupt_btn.clicked.connect(self.interrupt_download)
         self.update_btn.clicked.connect(self.update_app)
+        self.ffmpeg_btn.clicked.connect(self.install_ffmpeg)
         self.open_dir_btn.clicked.connect(self.open_directory)
         self.options_btn.clicked.connect(self.show_options)
 
         # Window settings
-        # self.setWindowTitle(self.tr("zagruz - yt-dlp GUI Wrapper"))
         self.setGeometry(100, 100, 600, 400)
 
         # Quit shortcut
@@ -136,6 +141,10 @@ class DownloadApp(QMainWindow):
 
     def start_download(self) -> None:
         """Validate inputs and start a new download thread"""
+        if self.update_in_progress:
+            self.log_output.append(self.tr("Cannot download during update"))
+            return
+
         url = self.url_input.text().strip()
         if not url:
             self.log_output.append(self.tr("Error: Please enter a URL"))
@@ -149,14 +158,17 @@ class DownloadApp(QMainWindow):
             self.log_output.append(self.tr("Download already in progress"))
             return
 
+        self.is_downloading = True
+        self.download_btn.setChecked(True)
+        self.download_btn.setText(self.tr(" Interrupt"))
+        self.download_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton))
         self.log_output.append(self.tr("Starting download: ") + url)
-        self.download_btn.setEnabled(False)
 
         if not self.download_dir:
             self.log_output.append(self.tr("Error: Please select a download directory"))
             return
 
-        self.download_thread = DownloadWorker(url, self.download_dir, format_options.selected)
+        self.download_thread = VideoDownloader(url, self.download_dir, format_options.selected)
         self.download_thread.output.connect(self.handle_download_output)
         self.download_thread.finished.connect(self.download_finished)
         self.download_thread.start()
@@ -190,18 +202,27 @@ class DownloadApp(QMainWindow):
 
     def download_finished(self, success: bool) -> None:
         """Handle download completion signal from worker thread"""
-        self.download_btn.setEnabled(True)
+        self.is_downloading = False
+        self.download_btn.setChecked(False)
+        self.download_btn.setText(self.tr(" Download"))
+        self.download_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton))
         if success:
             self.log_output.append(self.tr("Download completed successfully!"))
         else:
             self.log_output.append(self.tr("Download failed or interrupted"))
+
+    def toggle_download_action(self) -> None:
+        """Handle combined download/interrupt button functionality"""
+        if self.is_downloading:
+            self.interrupt_download()
+        else:
+            self.start_download()
 
     def interrupt_download(self) -> None:
         """Stop the current download process if active"""
         if self.download_thread and self.download_thread.isRunning():
             self.download_thread.stop()
             self.log_output.append(self.tr("Download interrupted by user"))
-            self.download_btn.setEnabled(True)
         else:
             self.log_output.append(self.tr("No active download to interrupt"))
 
@@ -226,23 +247,46 @@ class DownloadApp(QMainWindow):
         QDesktopServices.openUrl(QUrl.fromLocalFile(self.download_dir))
 
     def update_app(self) -> None:
-        """Start FFmpeg update in a background thread"""
-        if hasattr(self, 'update_thread') and self.update_thread.isRunning():
-            self.log_output.append(self.tr("Update already in progress"))
+        """Start application update in a background thread"""
+        if self.update_thread and self.update_thread.isRunning():
+            self.log_output.append(self.tr("[update] Already in progress"))
             return
 
         self.update_btn.setEnabled(False)
-        self.log_output.append(self.tr("Starting FFmpeg update..."))
-        self.update_thread = UpdateWorker(self.download_dir)
+        self.update_in_progress = True
+
+        self.update_thread = AppUpdater()
         self.update_thread.output.connect(self.handle_download_output)
         self.update_thread.finished.connect(self.update_finished)
         self.update_thread.start()
 
+    def install_ffmpeg(self) -> None:
+        """Start FFmpeg installation in a background thread"""
+        if self.update_thread and self.update_thread.isRunning():
+            self.log_output.append(self.tr("[ffmpeg] Already in progress"))
+            return
+
+        self.ffmpeg_btn.setEnabled(False)
+        self.update_in_progress = True
+
+        self.update_thread = FFmpegInstaller()
+        self.update_thread.output.connect(self.handle_download_output)
+        self.update_thread.finished.connect(self.ffmpeg_install_finished)
+        self.update_thread.start()
+
     def update_finished(self, success: bool) -> None:
-        """Handle update completion"""
+        """Handle app update completion"""
         self.update_btn.setEnabled(True)
         if success:
-            self.log_output.append(self.tr("FFmpeg update completed successfully!"))
+            self.log_output.append(self.tr("Application update completed!"))
+        else:
+            self.log_output.append(self.tr("Application update failed"))
+
+    def ffmpeg_install_finished(self, success: bool) -> None:
+        """Handle FFmpeg update completion"""
+        self.ffmpeg_btn.setEnabled(True)
+        if success:
+            self.log_output.append(self.tr("FFmpeg update completed!"))
         else:
             self.log_output.append(self.tr("FFmpeg update failed"))
 
@@ -286,7 +330,6 @@ class DownloadApp(QMainWindow):
         self.setWindowTitle(self.tr("zagruz - yt-dlp GUI Wrapper"))
         self.url_input.setPlaceholderText(self.tr("Insert URL to download"))
         self.download_btn.setText(self.tr(" Download"))
-        self.interrupt_btn.setText(self.tr(" Interrupt"))
         self.update_btn.setText(self.tr(" Update"))
         self.open_dir_btn.setText(self.tr(" Open"))
         self.options_btn.setText(self.tr(" Options"))

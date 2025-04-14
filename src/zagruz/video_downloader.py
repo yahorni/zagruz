@@ -6,7 +6,7 @@ from PyQt6.QtCore import QThread, pyqtSignal
 from yt_dlp import YoutubeDL
 
 
-class DownloadWorker(QThread):
+class VideoDownloader(QThread):
     """A QThread subclass that handles video downloads in the background
 
     Attributes:
