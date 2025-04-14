@@ -1,23 +1,24 @@
 import os
 import re
-import sys
 import shutil
+import sys
 from importlib.resources import files
 from pathlib import Path
 
 import qdarktheme
-from PyQt6.QtCore import Qt, QTranslator, QUrl
+from PyQt6.QtCore import Qt, QTranslator, QUrl, QSettings
 from PyQt6.QtGui import QAction, QDesktopServices, QIcon
-from PyQt6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
-                             QLineEdit, QMainWindow, QPushButton, QStyle,
-                             QTextEdit, QVBoxLayout, QWidget)
+from PyQt6.QtWidgets import (QApplication, QCheckBox, QDialog,
+                             QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
+                             QMainWindow, QPushButton, QStyle, QTextEdit,
+                             QVBoxLayout, QWidget)
 
 from zagruz import __version__
-from zagruz.video_downloader import VideoDownloader
-from zagruz.options import format_options, lang_options, theme_options
-from zagruz.options_dialog import OptionsDialog
 from zagruz.app_updater import AppUpdater
 from zagruz.ffmpeg_installer import FFmpegInstaller
+from zagruz.options import format_options, lang_options, theme_options
+from zagruz.options_dialog import OptionsDialog
+from zagruz.video_downloader import VideoDownloader
 
 
 class DownloadApp(QMainWindow):
@@ -43,6 +44,7 @@ class DownloadApp(QMainWindow):
             self.apply_theme(theme_options.selected)
             self.apply_language(lang_options.selected)
             self.retranslateUi()
+            self.check_ffmpeg_requirement()
 
     def init_ui(self) -> None:
         """Initialize and arrange all UI components"""
@@ -72,10 +74,6 @@ class DownloadApp(QMainWindow):
         self.open_dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
         self.open_dir_btn.setToolTip(self.tr("Open download directory"))
 
-        self.ffmpeg_btn: QPushButton = QPushButton(" FFmpeg")
-        self.ffmpeg_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_ComputerIcon))
-        self.ffmpeg_btn.setToolTip(self.tr("Install FFmpeg binary"))
-
         self.options_btn: QPushButton = QPushButton(self.tr(" Options"))
         self.options_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
         self.options_btn.setToolTip(self.tr("Application settings"))
@@ -89,7 +87,6 @@ class DownloadApp(QMainWindow):
         button_line.addWidget(self.download_btn)
         button_line.addWidget(self.update_btn)
         button_line.addWidget(self.open_dir_btn)
-        button_line.addWidget(self.ffmpeg_btn)
         button_line.addWidget(self.options_btn)
 
         # Log output area
@@ -121,12 +118,8 @@ class DownloadApp(QMainWindow):
 
         # Connect buttons (placeholder functions)
         self.update_btn.clicked.connect(self.update_app)
-        self.ffmpeg_btn.clicked.connect(self.install_ffmpeg)
         self.open_dir_btn.clicked.connect(self.open_directory)
         self.options_btn.clicked.connect(self.show_options)
-        
-        # Set initial FFmpeg button visibility
-        self.ffmpeg_btn.setVisible(not self._is_ffmpeg_installed())
 
         # Window settings
         self.setGeometry(100, 100, 600, 400)
@@ -146,7 +139,7 @@ class DownloadApp(QMainWindow):
     def start_download(self) -> None:
         """Validate inputs and start a new download thread"""
         if self.update_in_progress:
-            self.log_output.append(self.tr("Cannot download during update"))
+            self.log_output.append(self.tr("Cannot download during update/installation"))
             return
 
         url = self.url_input.text().strip()
@@ -254,6 +247,42 @@ class DownloadApp(QMainWindow):
         """Check if FFmpeg is already installed and accessible"""
         return bool(shutil.which('ffmpeg'))
 
+    def check_ffmpeg_requirement(self) -> None:
+        """Check FFmpeg installation on startup and prompt user if missing"""
+        if self._is_ffmpeg_installed():
+            return
+
+        settings = QSettings()
+        if settings.value("ffmpeg/disablePrompt", False, type=bool):
+            return
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle(self.tr("FFmpeg installation"))
+        layout = QVBoxLayout()
+
+        message = QLabel(self.tr(
+            "FFmpeg is required for audio conversion and some video formats.\n"
+            "Would you like to install it now?"
+        ))
+        message.setWordWrap(True)
+        layout.addWidget(message)
+
+        dont_show_check = QCheckBox(self.tr("Don't show this message again"))
+        layout.addWidget(dont_show_check)
+
+        btn_box = QDialogButtonBox()
+        btn_box.addButton(QDialogButtonBox.StandardButton.Yes).clicked.connect(dialog.accept)
+        btn_box.addButton(QDialogButtonBox.StandardButton.No).clicked.connect(dialog.reject)
+        layout.addWidget(btn_box)
+
+        dialog.setLayout(layout)
+
+        if dont_show_check.isChecked():
+            settings.setValue("ffmpeg/disablePrompt", True)
+
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.install_ffmpeg()
+
     def update_app(self) -> None:
         """Start application update in a background thread"""
         if self.update_thread and self.update_thread.isRunning():
@@ -274,8 +303,9 @@ class DownloadApp(QMainWindow):
             self.log_output.append(self.tr("[ffmpeg] Already in progress"))
             return
 
-        self.ffmpeg_btn.setEnabled(False)
+        self.download_btn.setEnabled(False)
         self.update_in_progress = True
+        self.log_output.append(self.tr("[ffmpeg] Starting installation..."))
 
         self.update_thread = FFmpegInstaller()
         self.update_thread.output.connect(self.handle_download_output)
@@ -291,13 +321,13 @@ class DownloadApp(QMainWindow):
             self.log_output.append(self.tr("Application update failed"))
 
     def ffmpeg_install_finished(self, success: bool) -> None:
-        """Handle FFmpeg update completion"""
-        self.ffmpeg_btn.setEnabled(True)
+        """Handle FFmpeg installation completion"""
+        self.download_btn.setEnabled(True)
+        self.update_in_progress = False
         if success:
-            self.log_output.append(self.tr("FFmpeg update completed!"))
-            self.ffmpeg_btn.setVisible(False)
+            self.log_output.append(self.tr("FFmpeg installed successfully!"))
         else:
-            self.log_output.append(self.tr("FFmpeg update failed"))
+            self.log_output.append(self.tr("FFmpeg installation failed"))
 
     def show_options(self) -> None:
         """Show the options dialog window"""

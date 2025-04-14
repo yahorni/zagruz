@@ -62,209 +62,226 @@
   <context>
     <name>DownloadApp</name>
     <message>
-      <location filename="../zagruz.py" line="331" />
-      <location filename="../zagruz.py" line="55" />
+      <location filename="../zagruz.py" line="370" />
+      <location filename="../zagruz.py" line="58" />
       <source>Insert URL to download</source>
       <translation>Вставьте ссылку для скачивания</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="332" />
-      <location filename="../zagruz.py" line="207" />
-      <location filename="../zagruz.py" line="59" />
+      <location filename="../zagruz.py" line="371" />
+      <location filename="../zagruz.py" line="204" />
+      <location filename="../zagruz.py" line="62" />
       <source> Download</source>
       <translation> Скачать</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="61" />
+      <location filename="../zagruz.py" line="64" />
       <source>Download video/audio</source>
       <translation> Скачать видео/аудио</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="333" />
-      <location filename="../zagruz.py" line="66" />
+      <location filename="../zagruz.py" line="372" />
+      <location filename="../zagruz.py" line="69" />
       <source> Update</source>
       <translation> Обновить</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="68" />
+      <location filename="../zagruz.py" line="71" />
       <source>Update application</source>
       <translation>Обновить приложение</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="334" />
-      <location filename="../zagruz.py" line="70" />
+      <location filename="../zagruz.py" line="373" />
+      <location filename="../zagruz.py" line="73" />
       <source> Open</source>
       <translation> Открыть</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="72" />
+      <location filename="../zagruz.py" line="75" />
       <source>Open download directory</source>
       <translation>Открыть папку для скачивания</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="76" />
-      <source>Install FFmpeg binary</source>
-      <translation>Установить FFmpeg</translation>
-    </message>
-    <message>
-      <location filename="../zagruz.py" line="335" />
-      <location filename="../zagruz.py" line="78" />
+      <location filename="../zagruz.py" line="374" />
+      <location filename="../zagruz.py" line="77" />
       <source> Options</source>
       <translation> Настройки</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="80" />
+      <location filename="../zagruz.py" line="79" />
       <source>Application settings</source>
       <translation>Настройки приложения</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="339" />
-      <location filename="../zagruz.py" line="105" />
+      <location filename="../zagruz.py" line="378" />
+      <location filename="../zagruz.py" line="103" />
       <source>Hint: Press Ctrl+Q to quit</source>
       <translation>Подсказка: Нажми Ctrl+Q чтобы выйти</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="131" />
+      <location filename="../zagruz.py" line="128" />
       <source>Quit</source>
       <translation>Выход</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="137" />
+      <location filename="../zagruz.py" line="134" />
       <source>Focus on URL input</source>
       <translation>Фокус на вводе ссылки</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="145" />
-      <source>Cannot download during update</source>
-      <translation>Невозможно скачивать во время обновления</translation>
+      <location filename="../zagruz.py" line="142" />
+      <source>Cannot download during update/installation</source>
+      <translation>Невозможно скачивать во время обновления/установки</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="150" />
+      <location filename="../zagruz.py" line="147" />
       <source>Error: Please enter a URL</source>
       <translation>Ошибка: Пожалуйста, введите ссылку</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="154" />
+      <location filename="../zagruz.py" line="151" />
       <source>Error: Invalid URL</source>
       <translation>Ошибка: Невалидная ссылка</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="158" />
+      <location filename="../zagruz.py" line="155" />
       <source>Download already in progress</source>
       <translation>Загрузка уже в процессе</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="163" />
+      <location filename="../zagruz.py" line="160" />
       <source> Interrupt</source>
       <translation> Прервать</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="165" />
+      <location filename="../zagruz.py" line="162" />
       <source>Starting download: </source>
       <translation>Загрузка начинается: </translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="168" />
+      <location filename="../zagruz.py" line="165" />
       <source>Error: Please select a download directory</source>
       <translation>Ошибка: Пожалуйста, выберите папку для скачивания</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="210" />
+      <location filename="../zagruz.py" line="207" />
       <source>Download completed successfully!</source>
       <translation>Загрузка успешно завершена</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="212" />
+      <location filename="../zagruz.py" line="209" />
       <source>Download failed or interrupted</source>
       <translation>Загрузка не удалась либо была прервана</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="225" />
+      <location filename="../zagruz.py" line="222" />
       <source>Download interrupted by user</source>
       <translation>Загрузка прервана пользователем</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="227" />
+      <location filename="../zagruz.py" line="224" />
       <source>No active download to interrupt</source>
       <translation>Нет активной загрузки для прерывания</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="243" />
+      <location filename="../zagruz.py" line="240" />
       <source>Error: Directory does not exist - </source>
       <translation>Ошибка: Папка не существует - </translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="252" />
+      <location filename="../zagruz.py" line="260" />
+      <source>FFmpeg installation</source>
+      <translation>Установка FFmpeg</translation>
+    </message>
+    <message>
+      <location filename="../zagruz.py" line="263" />
+      <source>FFmpeg is required for audio conversion and some video formats.
+Would you like to install it now?</source>
+      <translation>FFmpeg необходим для конвертации аудио и некоторых видео форматов.
+Желаете уставить его?</translation>
+    </message>
+    <message>
+      <location filename="../zagruz.py" line="270" />
+      <source>Don't show this message again</source>
+      <translation>Не показывать это снова</translation>
+    </message>
+    <message>
+      <location filename="../zagruz.py" line="289" />
       <source>[update] Already in progress</source>
       <translation>[update] Обновление уже выполняется</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="266" />
+      <location filename="../zagruz.py" line="303" />
       <source>[ffmpeg] Already in progress</source>
       <translation>[ffmpeg] Обновление уже выполняется</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="281" />
+      <location filename="../zagruz.py" line="308" />
+      <source>[ffmpeg] Starting installation...</source>
+      <translation>[ffmpeg] Установка начата...</translation>
+    </message>
+    <message>
+      <location filename="../zagruz.py" line="319" />
       <source>Application update completed!</source>
       <translation>Обновление приложения завершено!</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="283" />
+      <location filename="../zagruz.py" line="321" />
       <source>Application update failed</source>
       <translation>Ошибка обновления приложения</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="289" />
-      <source>FFmpeg update completed!</source>
-      <translation>Обновление FFmpeg завершено!</translation>
+      <location filename="../zagruz.py" line="328" />
+      <source>FFmpeg installed successfully!</source>
+      <translation>FFmpeg успешно установлен!</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="291" />
-      <source>FFmpeg update failed</source>
-      <translation>Обновление FFmpeg не удалось</translation>
+      <location filename="../zagruz.py" line="330" />
+      <source>FFmpeg installation failed</source>
+      <translation>Установка FFmpeg не удалась</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="308" />
+      <location filename="../zagruz.py" line="347" />
       <source>Download directory updated to: </source>
       <translation>Папка для скачивания обновлена: </translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="313" />
+      <location filename="../zagruz.py" line="352" />
       <source>Download format updated to: </source>
       <translation>Формат для скачивания обновлен: </translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="320" />
+      <location filename="../zagruz.py" line="359" />
       <source>Theme changed to: </source>
       <translation>Тема обновлена: </translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="326" />
+      <location filename="../zagruz.py" line="365" />
       <source>Language changed to: </source>
       <translation>Язык обновлен: </translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="330" />
+      <location filename="../zagruz.py" line="369" />
       <source>zagruz - yt-dlp GUI Wrapper</source>
       <translation>zagruz - yt-dlp GUI Wrapper</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="336" />
+      <location filename="../zagruz.py" line="375" />
       <source>Log output will appear here...</source>
       <translation>Сообщения будут появляться здесь...</translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="345" />
+      <location filename="../zagruz.py" line="384" />
       <source>Unsupported language: </source>
       <translation>Неподдерживаемый язык: </translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="378" />
+      <location filename="../zagruz.py" line="417" />
       <source>Failed to find language file: </source>
       <translation>Не удалось найти языковой файл: </translation>
     </message>
     <message>
-      <location filename="../zagruz.py" line="382" />
+      <location filename="../zagruz.py" line="421" />
       <source>Failed to load language: </source>
       <translation>Не удалось загрузить язык: </translation>
     </message>
@@ -272,52 +289,42 @@
   <context>
     <name>FFmpegInstaller</name>
     <message>
-      <location filename="../ffmpeg_installer.py" line="41" />
-      <source>[ffmpeg] FFmpeg is already installed</source>
-      <translation>[ffmpeg] FFmpeg уже установлен</translation>
-    </message>
-    <message>
-      <location filename="../ffmpeg_installer.py" line="45" />
+      <location filename="../ffmpeg_installer.py" line="36" />
       <source>[ffmpeg] Starting download...</source>
       <translation>[ffmpeg] Начало загрузки...</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="56" />
-      <source>[ffmpeg] Downloading FFmpeg...</source>
-      <translation>[ffmpeg] Загрузка FFmpeg...</translation>
-    </message>
-    <message>
-      <location filename="../ffmpeg_installer.py" line="62" />
+      <location filename="../ffmpeg_installer.py" line="51" />
       <source>[ffmpeg] Extracting archive...</source>
       <translation>[ffmpeg] Распаковка архива...</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="65" />
+      <location filename="../ffmpeg_installer.py" line="54" />
       <source>[ffmpeg] Installing FFmpeg...</source>
       <translation>[ffmpeg] Установка FFmpeg...</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="85" />
+      <location filename="../ffmpeg_installer.py" line="74" />
       <source>FFmpeg binary not found in download package</source>
       <translation>Бинарный файл FFmpeg не найден в пакете</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="91" />
+      <location filename="../ffmpeg_installer.py" line="80" />
       <source>[ffmpeg] Installing to: </source>
       <translation>[ffmpeg] Установка в: </translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="97" />
+      <location filename="../ffmpeg_installer.py" line="86" />
       <source>Could not remove old FFmpeg: </source>
       <translation>Не удалось удалить старый FFmpeg: </translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="101" />
+      <location filename="../ffmpeg_installer.py" line="90" />
       <source>[ffmpeg] FFmpeg installed successfully</source>
       <translation>[ffmpeg] FFmpeg успешно установлен</translation>
     </message>
     <message>
-      <location filename="../ffmpeg_installer.py" line="105" />
+      <location filename="../ffmpeg_installer.py" line="94" />
       <source>[ffmpeg] Set executable permissions</source>
       <translation>[ffmpeg] Установлены права на выполнение</translation>
     </message>

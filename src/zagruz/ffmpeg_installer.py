@@ -44,11 +44,9 @@ class FFmpegInstaller(BaseDownloader):
 
     def _perform_install(self, tmpdir: str) -> None:
         """Execute FFmpeg install workflow"""
-        self.output.emit(self.tr("[ffmpeg] Downloading FFmpeg..."))
-        download_path = self.downloader.download_file(
-            self.base_url + self.archive_name,
-            os.path.join(tmpdir, self.archive_name)
-        )
+        url = self.base_url + self.archive_name
+        self.output.emit(self.tr("[ffmpeg] Downloading FFmpeg from " + f"'{url}'"))
+        download_path = self.downloader.download_file(url, os.path.join(tmpdir, self.archive_name))
 
         self.output.emit(self.tr("[ffmpeg] Extracting archive..."))
         self._extract_archive(download_path, tmpdir)
