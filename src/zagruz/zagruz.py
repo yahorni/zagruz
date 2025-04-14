@@ -6,7 +6,7 @@ from importlib.resources import files
 from pathlib import Path
 
 import qdarktheme
-from PyQt6.QtCore import Qt, QTranslator, QUrl, QSettings, QStandardPaths
+from PyQt6.QtCore import QSettings, QStandardPaths, Qt, QTranslator, QUrl
 from PyQt6.QtGui import QAction, QDesktopServices, QIcon
 from PyQt6.QtWidgets import (QApplication, QCheckBox, QDialog,
                              QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
@@ -140,7 +140,7 @@ class DownloadApp(QMainWindow):
     def start_download(self) -> None:
         """Validate inputs and start a new download thread"""
         if self.update_in_progress:
-            self.log_output.append(self.tr("Cannot download during update/installation"))
+            self.log_output.append(self.tr("Please wait until the current download finishes"))
             return
 
         url = self.url_input.text().strip()
@@ -272,8 +272,12 @@ class DownloadApp(QMainWindow):
         layout.addWidget(dont_show_check)
 
         btn_box = QDialogButtonBox()
-        btn_box.addButton(QDialogButtonBox.StandardButton.Yes).clicked.connect(dialog.accept)
-        btn_box.addButton(QDialogButtonBox.StandardButton.No).clicked.connect(dialog.reject)
+        yes_btn = QPushButton(self.tr("Yes"))
+        no_btn = QPushButton(self.tr("No"))
+        btn_box.addButton(yes_btn, QDialogButtonBox.ButtonRole.AcceptRole)
+        btn_box.addButton(no_btn, QDialogButtonBox.ButtonRole.RejectRole)
+        yes_btn.clicked.connect(dialog.accept)
+        no_btn.clicked.connect(dialog.reject)
         layout.addWidget(btn_box)
 
         dialog.setLayout(layout)
@@ -287,7 +291,7 @@ class DownloadApp(QMainWindow):
     def update_app(self) -> None:
         """Start application update in a background thread"""
         if self.update_thread and self.update_thread.isRunning():
-            self.log_output.append(self.tr("[update] Already in progress"))
+            self.log_output.append(self.tr("Please wait until the current download finishes"))
             return
 
         self.update_btn.setEnabled(False)
@@ -295,40 +299,32 @@ class DownloadApp(QMainWindow):
 
         self.update_thread = AppUpdater()
         self.update_thread.output.connect(self.handle_download_output)
-        self.update_thread.finished.connect(self.update_finished)
+        self.update_thread.finished.connect(self._update_finished)
         self.update_thread.start()
 
     def install_ffmpeg(self) -> None:
         """Start FFmpeg installation in a background thread"""
         if self.update_thread and self.update_thread.isRunning():
-            self.log_output.append(self.tr("[ffmpeg] Already in progress"))
+            self.log_output.append(self.tr("Please wait until the current download finishes"))
             return
 
         self.download_btn.setEnabled(False)
         self.update_in_progress = True
-        self.log_output.append(self.tr("[ffmpeg] Starting installation..."))
 
         self.update_thread = FFmpegInstaller()
         self.update_thread.output.connect(self.handle_download_output)
-        self.update_thread.finished.connect(self.ffmpeg_install_finished)
+        self.update_thread.finished.connect(self._ffmpeg_install_finished)
         self.update_thread.start()
 
-    def update_finished(self, success: bool) -> None:
+    def _update_finished(self, success: bool) -> None:
         """Handle app update completion"""
         self.update_btn.setEnabled(True)
-        if success:
-            self.log_output.append(self.tr("Application update completed!"))
-        else:
-            self.log_output.append(self.tr("Application update failed"))
+        self.update_in_progress = False
 
-    def ffmpeg_install_finished(self, success: bool) -> None:
+    def _ffmpeg_install_finished(self, success: bool) -> None:
         """Handle FFmpeg installation completion"""
         self.download_btn.setEnabled(True)
         self.update_in_progress = False
-        if success:
-            self.log_output.append(self.tr("FFmpeg installed successfully!"))
-        else:
-            self.log_output.append(self.tr("FFmpeg installation failed"))
 
     def show_options(self) -> None:
         """Show the options dialog window"""

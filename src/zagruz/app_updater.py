@@ -24,11 +24,17 @@ class AppUpdater(BaseDownloader):
     @override
     def run(self) -> None:
         """Main application update logic"""
-        self.output.emit(self.tr("[update] Starting..."))
+        self.output.emit(self.tr("[update] Starting app update..."))
         try:
             with self._temp_dir() as tmpdir:
-                download_url = self.prepare_update()
-                download_path = self.download(tmpdir, download_url)
+                with urlopen("https://api.github.com/repos/yahorni/zagruz/releases/latest", timeout=15) as response:
+                    data = json.load(response)
+
+                if not self.is_update_available(data):
+                    self.finished.emit(True)
+                    return
+
+                download_path = self.download(tmpdir, data)
                 extracted_dir = self.extract(download_path, tmpdir)
                 self.install(extracted_dir)
                 self.finished.emit(True)
@@ -36,12 +42,9 @@ class AppUpdater(BaseDownloader):
             self.output.emit(f"[update] Error: {str(e)}")
             self.finished.emit(False)
 
-    def prepare_update(self) -> str:
+    def is_update_available(self, data) -> bool:
         """Check for available updates"""
         self.output.emit(self.tr("[update] Checking for updates..."))
-
-        with urlopen("https://api.github.com/repos/yahorni/zagruz/releases/latest", timeout=15) as response:
-            data = json.load(response)
 
         latest_version = data["tag_name"].lstrip('v')
         current_v = version.parse(__version__)
@@ -49,22 +52,23 @@ class AppUpdater(BaseDownloader):
 
         if current_v > latest_v:
             self.output.emit(self.tr("[update] Development version detected "))
-            raise RuntimeError(self.tr("Development version detected"))
+            return False
         if current_v == latest_v:
             self.output.emit(self.tr("[update] Already up-to-date"))
-            raise RuntimeError(self.tr("Already up-to-date"))
-
-        self.asset = next(a for a in data["assets"] if
-                          ("windows" in a["name"].lower() and sys.platform == "win32") or
-                          ("linux" in a["name"].lower() and sys.platform == "linux"))
+            return False
 
         self.output.emit(self.tr("[update] Found update: ") + latest_version)
-        return self.asset["browser_download_url"]
+        return True
 
-    def download(self, tmpdir: str, download_url: str) -> str:
-        """Download the update package"""
+    def download(self, tmpdir: str, data) -> str:
+        """Download latest app version"""
+        asset = next(a for a in data["assets"] if
+                     ("windows" in a["name"].lower() and sys.platform == "win32") or
+                     ("linux" in a["name"].lower() and sys.platform == "linux"))
+        download_url = asset["browser_download_url"]
+
         self.output.emit(self.tr("[update] Downloading update..."))
-        return self.downloader.download_file(self.download_url, os.path.join(tmpdir, self.asset["name"]))
+        return self.downloader.download_file(download_url, os.path.join(tmpdir, asset["name"]))
 
     def extract(self, archive_path: str, tmpdir: str) -> str:
         """Extract the downloaded package"""

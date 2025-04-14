@@ -1,9 +1,9 @@
 ifeq ($(OS),Windows_NT)
 	platform := windows
-	executable := zagruz.exe
+	executable := zagruz-win.exe
 else
 	platform := linux
-	executable := zagruz
+	executable := zagruz-linux
 endif
 
 default: init run

@@ -36,23 +36,20 @@ class FFmpegInstaller(BaseDownloader):
         self.output.emit(self.tr("[ffmpeg] Starting download..."))
         try:
             with self._temp_dir() as tmpdir:
-                self._perform_install(tmpdir)
+                url = self.base_url + self.archive_name
+                self.output.emit(self.tr("[ffmpeg] Downloading FFmpeg from ") + f"'{url}'")
+                download_path = self.downloader.download_file(url, os.path.join(tmpdir, self.archive_name))
+
+                self.output.emit(self.tr("[ffmpeg] Extracting archive..."))
+                self._extract_archive(download_path, tmpdir)
+
+                self.output.emit(self.tr("[ffmpeg] Installing FFmpeg..."))
+                self._install_binary(os.path.join(tmpdir, self.ffmpeg_build))
+
                 self.finished.emit(True)
         except Exception as e:
-            self.output.emit(f"[ffmpeg] Error: {str(e)}")
+            self.output.emit("[ffmpeg] Error: " + str(e))
             self.finished.emit(False)
-
-    def _perform_install(self, tmpdir: str) -> None:
-        """Execute FFmpeg install workflow"""
-        url = self.base_url + self.archive_name
-        self.output.emit(self.tr("[ffmpeg] Downloading FFmpeg from " + f"'{url}'"))
-        download_path = self.downloader.download_file(url, os.path.join(tmpdir, self.archive_name))
-
-        self.output.emit(self.tr("[ffmpeg] Extracting archive..."))
-        self._extract_archive(download_path, tmpdir)
-
-        self.output.emit(self.tr("[ffmpeg] Installing FFmpeg..."))
-        self._install_binary(os.path.join(tmpdir, self.ffmpeg_build))
 
     def _extract_archive(self, archive_path: str, tmpdir: str) -> None:
         """Extract downloaded FFmpeg archive"""
@@ -65,7 +62,7 @@ class FFmpegInstaller(BaseDownloader):
 
     def _handle_download_progress(self, percent: int, speed_mb: float, elapsed: float) -> None:
         """Handle download progress updates"""
-        self.output.emit(self.tr(f"[ffmpeg] Downloading... {percent}% ({speed_mb:.2f} MB/s, {elapsed:.1f}s)"))
+        self.output.emit(self.tr("[ffmpeg] Downloading... ") + f"{percent}% ({speed_mb:.2f} MB/s, {elapsed:.1f}s)")
 
     def _install_binary(self, extracted_dir: str) -> None:
         """Install the FFmpeg binary to system location"""

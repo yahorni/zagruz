@@ -3,7 +3,7 @@ import time
 import urllib.request
 from typing import ContextManager
 
-from PyQt6.QtCore import QThread, pyqtSignal, QObject
+from PyQt6.QtCore import QObject, QThread, pyqtSignal
 
 
 class BaseDownloader(QThread):
