@@ -1,9 +1,11 @@
+VERSION := $(shell uv run python -c 'from importlib.metadata import version; print(version("zagruz"))')
+
 ifeq ($(OS),Windows_NT)
-	platform := windows
-	executable := zagruz-win.exe
+	PLATFORM := windows
+	EXECUTABLE := zagruz-win-$(VERSION).exe
 else
-	platform := linux
-	executable := zagruz-linux
+	PLATFORM := linux
+	EXECUTABLE := zagruz-linux-$(VERSION)
 endif
 
 default: init run
@@ -18,8 +20,8 @@ package:
 	uv run --with toml ./scripts/generate_version.py
 	uv run pyinstaller \
 		--noconfirm \
-		--distpath dist/$(platform) \
-		package/$(platform).spec
+		--distpath dist/$(PLATFORM) \
+		package/$(PLATFORM).spec
 	rm -f ./src/zagruz/_version.py
 
 run:
@@ -31,7 +33,7 @@ run-wheel:
 	uvx ./dist/wheel/zagruz-*.whl zagruz
 
 run-package:
-	./dist/$(platform)/$(executable)
+	./dist/$(PLATFORM)/$(EXECUTABLE)
 
 test:
 	uv run python -m unittest discover -s tests -v
