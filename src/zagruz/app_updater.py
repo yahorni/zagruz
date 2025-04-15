@@ -1,5 +1,6 @@
 import json
 import os
+import platform
 import shutil
 import sys
 import tarfile
@@ -101,4 +102,8 @@ class AppUpdater(BaseDownloader):
         new_exe_name = os.path.basename(new_exe_path)
         dest_path = os.path.join(dest_dir, new_exe_name)
         shutil.move(new_exe_path, dest_path)
-        self.output.emit(self.tr("[update] Update complete. New binary installed as ") + f"'{new_exe_name}'. ")
+        self.output.emit(self.tr("[update] App installed as ") + f"'{new_exe_name}'. ")
+
+        if platform.system() != "Windows":
+            os.chmod(dest_path, 0o755)
+            self.output.emit(self.tr("[update] Set executable permissions"))
