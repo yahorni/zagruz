@@ -6,7 +6,7 @@ from importlib.resources import files
 from pathlib import Path
 
 import qdarktheme
-from PyQt6.QtCore import QSettings, QStandardPaths, Qt, QTranslator, QUrl
+from PyQt6.QtCore import QSettings, Qt, QTranslator, QUrl
 from PyQt6.QtGui import QAction, QDesktopServices, QIcon
 from PyQt6.QtWidgets import (QApplication, QCheckBox, QDialog,
                              QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
@@ -16,7 +16,8 @@ from PyQt6.QtWidgets import (QApplication, QCheckBox, QDialog,
 from zagruz import __version__
 from zagruz.app_updater import AppUpdater
 from zagruz.ffmpeg_installer import FFmpegInstaller
-from zagruz.options import format_options, lang_options, theme_options
+from zagruz.options import (download_dir_options, format_options, lang_options,
+                            theme_options)
 from zagruz.options_dialog import OptionsDialog
 from zagruz.video_downloader import VideoDownloader
 
@@ -35,8 +36,6 @@ class DownloadApp(QMainWindow):
         self.translator = QTranslator()
         self.update_in_progress: bool = False
 
-        default_download_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DownloadLocation)
-        self.download_dir = QSettings().value("download_dir", default_download_dir, type=str)
         self.download_thread: VideoDownloader | None = None
         self.update_thread: AppUpdater | None = None
 
@@ -162,11 +161,7 @@ class DownloadApp(QMainWindow):
         self.download_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton))
         self.log_output.append(self.tr("Starting download: ") + url)
 
-        if not self.download_dir:
-            self.log_output.append(self.tr("Error: Please select a download directory"))
-            return
-
-        self.download_thread = VideoDownloader(url, self.download_dir, format_options.selected)
+        self.download_thread = VideoDownloader(url, download_dir_options.selected, format_options.selected)
         self.download_thread.output.connect(self.handle_download_output)
         self.download_thread.finished.connect(self.download_finished)
         self.download_thread.start()
@@ -224,33 +219,18 @@ class DownloadApp(QMainWindow):
         else:
             self.log_output.append(self.tr("No active download to interrupt"))
 
-    def apply_theme(self, theme: str) -> None:
-        """Apply selected theme using qdarktheme"""
-
-        # Don't use full qdarktheme, just palette + stylesheets
-        self.setPalette(qdarktheme.load_palette(theme))
-        self.setStyleSheet(qdarktheme.load_stylesheet(theme))
-
-        # Force refresh of all UI elements
-        self.style().unpolish(self)
-        self.style().polish(self)
-
     def open_directory(self) -> None:
         """Open download directory in system file explorer"""
-        if not os.path.isdir(self.download_dir):
-            self.log_output.append(self.tr("Error: Directory does not exist - ") + self.download_dir)
+        if not os.path.isdir(download_dir_options.selected):
+            self.log_output.append(self.tr("Error: Directory does not exist - ") + download_dir_options.selected)
             return
 
         # Use Qt's platform-agnostic URL opening
-        QDesktopServices.openUrl(QUrl.fromLocalFile(self.download_dir))
-
-    def _is_ffmpeg_installed(self) -> bool:
-        """Check if FFmpeg is already installed and accessible"""
-        return bool(shutil.which('ffmpeg'))
+        QDesktopServices.openUrl(QUrl.fromLocalFile(download_dir_options.selected))
 
     def check_ffmpeg_requirement(self) -> None:
         """Check FFmpeg installation on startup and prompt user if missing"""
-        if self._is_ffmpeg_installed():
+        if shutil.which('ffmpeg'):
             return
 
         settings = QSettings()
@@ -329,8 +309,6 @@ class DownloadApp(QMainWindow):
     def show_options(self) -> None:
         """Show the options dialog window"""
         dialog = OptionsDialog(self)
-        dialog.dir_input.setText(self.download_dir)
-        dialog.format_combo.setCurrentText(format_options.selected_text)
 
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self._update_download_directory(dialog.dir_input.text())
@@ -339,16 +317,14 @@ class DownloadApp(QMainWindow):
             self._update_language(lang_options.from_value(dialog.lang_combo.currentText()))
 
     def _update_download_directory(self, new_dir: str) -> None:
-        if new_dir != self.download_dir and new_dir and os.path.isdir(new_dir):
-            self.download_dir = new_dir
+        if new_dir != download_dir_options.selected and new_dir and os.path.isdir(new_dir):
+            download_dir_options.selected = new_dir
             self.log_output.append(self.tr("Download directory updated to: ") + new_dir)
-            QSettings().setValue("download_dir", new_dir)
 
     def _update_format(self, new_format: str) -> None:
         if new_format != format_options.selected and format_options.is_valid(new_format):
             format_options.selected = new_format
-            self.log_output.append(self.tr("Download format updated to: ") +
-                                   format_options.selected_text)
+            self.log_output.append(self.tr("Download format updated to: ") + format_options.selected_text)
 
     def _update_theme(self, new_theme: str) -> None:
         if new_theme != theme_options.selected and theme_options.is_valid(new_theme):
@@ -358,9 +334,58 @@ class DownloadApp(QMainWindow):
 
     def _update_language(self, new_lang: str) -> None:
         if new_lang != lang_options.selected and lang_options.is_valid(new_lang):
+            lang_options.selected = new_lang
             self.apply_language(new_lang)
             self.retranslateUi()
             self.log_output.append(self.tr("Language changed to: ") + new_lang)
+
+    def apply_theme(self, theme: str) -> None:
+        """Apply selected theme using qdarktheme"""
+
+        # Don't use full qdarktheme, just palette + stylesheets
+        self.setPalette(qdarktheme.load_palette(theme))
+        self.setStyleSheet(qdarktheme.load_stylesheet(theme))
+
+        # Force refresh of all UI elements
+        self.style().unpolish(self)
+        self.style().polish(self)
+
+    def apply_language(self, locale: str) -> None:
+        """Load application translations"""
+
+        lang = lang_options.to_text(locale)
+
+        if not lang_options.is_valid(locale):
+            self.log_output.append(self.tr("Unsupported language: ") + lang)
+            return
+
+        if locale == "en_US":
+            QApplication.instance().removeTranslator(self.translator)
+            return
+
+        resource_path = None
+
+        if getattr(sys, 'frozen', False):
+            # PyInstaller bundled executable
+            base_path = getattr(sys, '_MEIPASS', os.path.dirname(sys.executable))
+            bundled_path = os.path.join(base_path, 'translations', f"{locale}.qm")
+            if os.path.exists(bundled_path):
+                resource_path = bundled_path
+        else:
+            # Development mode using package resources
+            resource_path = files("zagruz.translations").joinpath(f"{locale}.qm")
+            if not resource_path.is_file():
+                resource_path = None
+
+        if not resource_path or not os.path.exists(resource_path):
+            self.log_output.append(self.tr("Failed to find language file: ") + lang)
+            return
+
+        if not self.translator.load(str(resource_path)):
+            self.log_output.append(self.tr("Failed to load language: ") + lang)
+            return
+
+        QApplication.instance().installTranslator(self.translator)
 
     def retranslateUi(self) -> None:
         """Retranslate all UI elements"""
@@ -374,52 +399,6 @@ class DownloadApp(QMainWindow):
         for widget in self.findChildren(QLabel):
             if widget.text().startswith("Hint:"):
                 widget.setText(self.tr("Hint: Press Ctrl+Q to quit"))
-
-    def apply_language(self, lang: str) -> None:
-        """Load application translations"""
-
-        if not lang_options.is_valid(lang):
-            self.log_output.append(self.tr("Unsupported language: ") + lang)
-            return
-
-        if lang == "English":
-            QApplication.instance().removeTranslator(self.translator)
-            return
-
-        locale = "ru_RU"
-        resource_path = None
-
-        # Try different resource locations
-        if getattr(sys, 'frozen', False):
-            # PyInstaller bundled executable
-            base_path = getattr(sys, '_MEIPASS', os.path.dirname(sys.executable))
-            bundled_path = os.path.join(base_path, 'translations', f"{locale}.qm")
-            if os.path.exists(bundled_path):
-                resource_path = bundled_path
-        else:
-            # Development mode using package resources
-            try:
-                resource_path = files("zagruz.translations").joinpath(f"{locale}.qm")
-                if not resource_path.is_file():
-                    resource_path = None
-            except Exception:
-                pass
-
-        # Fallback to relative path
-        if not resource_path:
-            local_path = os.path.join(os.path.dirname(__file__), 'translations', f"{locale}.qm")
-            if os.path.exists(local_path):
-                resource_path = local_path
-
-        if not resource_path or not os.path.exists(resource_path):
-            self.log_output.append(self.tr("Failed to find language file: ") + lang)
-            return
-
-        if not self.translator.load(str(resource_path)):
-            self.log_output.append(self.tr("Failed to load language: ") + lang)
-            return
-
-        QApplication.instance().installTranslator(self.translator)
 
 
 def get_resource_path(relative_path: str) -> str:

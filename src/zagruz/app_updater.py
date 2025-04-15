@@ -7,8 +7,6 @@ import zipfile
 from typing import override
 from urllib.request import urlopen
 
-from packaging import version
-
 from zagruz import __version__
 from zagruz.base_downloader import BaseDownloader
 
@@ -59,8 +57,11 @@ class AppUpdater(BaseDownloader):
         """Check for available updates"""
         self.output.emit(self.tr("[update] Checking for updates..."))
 
-        current_v = version.parse(__version__)
-        latest_v = version.parse(latest_version)
+        def parse_version(version_str):
+            return tuple(map(int, version_str.split('.')))
+
+        current_v = parse_version(__version__)
+        latest_v = parse_version(latest_version)
         if current_v > latest_v:
             self.output.emit(self.tr("[update] Development version detected "))
             return False

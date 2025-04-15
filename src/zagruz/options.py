@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from PyQt6.QtCore import QObject, QSettings
+from PyQt6.QtCore import QObject, QSettings, QStandardPaths
 
 
 class _TranslatableOptionsMeta(ABCMeta, type(QObject)):
@@ -42,12 +42,15 @@ class _BaseOptions(QObject, metaclass=_TranslatableOptionsMeta):
     def selected(self, value: str) -> None:
         QSettings().setValue(self.section, value)
 
-    def is_valid(self, key: str) -> bool:
-        return key in self._get_raw_options()
-
     @property
     def selected_text(self) -> str:
         return self.options[self.selected]
+
+    def to_text(self, key: str) -> str:
+        return self.options[key]
+
+    def is_valid(self, key: str) -> bool:
+        return key in self._get_raw_options()
 
     @property
     def values(self) -> list[str]:
@@ -104,6 +107,22 @@ class _LangOptions(_BaseOptions):
         }
 
 
+class _DownloadDirOptions(QObject):
+    def __init__(self) -> None:
+        super().__init__()
+        self.section = "download_dir"
+        self.default_key = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DownloadLocation)
+
+    @property
+    def selected(self) -> str:
+        return QSettings().value(self.section, self.default_key, type=str)
+
+    @selected.setter
+    def selected(self, value: str) -> None:
+        QSettings().setValue(self.section, value)
+
+
 format_options = _FormatOptions()
 theme_options = _ThemeOptions()
 lang_options = _LangOptions()
+download_dir_options = _DownloadDirOptions()

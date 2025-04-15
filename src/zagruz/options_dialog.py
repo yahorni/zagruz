@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (QApplication, QComboBox, QDialog, QFileDialog,
                              QFormLayout, QHBoxLayout, QLineEdit, QPushButton,
                              QStyle, QVBoxLayout, QWidget)
 
-from zagruz.options import format_options, lang_options, theme_options
+from zagruz.options import format_options, lang_options, theme_options, download_dir_options
 
 
 class OptionsDialog(QDialog):
@@ -42,6 +42,7 @@ class OptionsDialog(QDialog):
         # Directory selection
         dir_layout = QHBoxLayout()
         self.dir_input = QLineEdit()
+        self.dir_input.setText(download_dir_options.selected)
         self.dir_input.setReadOnly(True)
         self.dir_btn = QPushButton()
         self.dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon))
