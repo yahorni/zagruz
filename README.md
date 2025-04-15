@@ -5,82 +5,57 @@
 
 A cross-platform GUI frontend for yt-dlp featuring:
 
-- **Presets**: TV (480p MP4), Audio (320kbps MP3), Best Quality
-- **Theme Support**: System/Light/Dark modes with DPI scaling
-- **Localization**: English & Russian interface
-- **Update System**: Built-in FFmpeg updater
+- Download videos/audio from 1000+ sites
+- Presets: Best, TV (480p), Audio (320kbps)
+- Themes: System/Light/Dark
+- Languages: English, Russian
+- Built-in FFmpeg updater
+- Persistent configuration: language/preset/theme/etc
+
+![zagruz UI](assets/zagruz.png)
 
 ## Usage
 
 ```bash
 git clone https://github.com/yahorni/zagruz.git
 cd zagruz
-make
+make  # same as: make init run
 ```
 
-## Build and install
+## Dependencies
+
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Video download backend
+- [PyQt6](https://www.riverbankcomputing.com/software/pyqt/) - GUI framework
+- [PyQtDarkTheme](https://github.com/5yutan5/PyQtDarkTheme/) - Qt themes
+
+## Build and run
 
 ```bash
 # install dependencies
 make init
 
-# run application
-make run        # using make
-uv run zagruz   # using uv
+# 1. run using make
+make run
+# 2. run using uv
+uv run zagruz
 
-# build python package
-make build
-
-# build packaged executable (pyinstaller)
+# build bundled executable (pyinstaller)
 make package
+# 1. run using make
+make run-package
+# 2. run using the package itself
+./dist/linux/zagruz-linux-0.1.4
+
+# build python wheel
+make wheel
+# 1. run using make
+make run-wheel
+# 2. run using uv
+uvx dist/wheel/zagruz-0.1.4-py3-none-any.whl zagruz
 
 # clean all build artifacts
 make clean
 ```
-
-## Development
-
-```bash
-# run dev
-make clean init run
-
-# run wheel
-make clean init build run-wheel
-
-# run package
-make clean init package run-package
-```
-
-## Dependencies
-
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Video download backend (supports 1000+ sites)
-- [PyQt6](https://www.riverbankcomputing.com/software/pyqt/) - GUI framework
-- [PyQtDarkTheme](https://github.com/5yutan5/PyQtDarkTheme/) - Qt app theme
-
-## TODO
-
-- [x] Binary package for linux/windows
-- [x] Implement CI/CD pipeline with GitHub Actions
-- [x] Preconfigured profiles of yt-dlp ("best", "tv", "audio",...)
-- [x] "Options" button + window
-  - [x] Add dark/light theme toggle
-  - [x] Download directory selection
-  - [x] Russian language support
-- [x] Configuration file (QSettings)
-  - [x] Selected theme
-  - [x] Selected language
-  - [x] Download directory persistence between sessions
-- [ ] Ffmpeg integration
-  - [x] Manual updater
-  - [ ] Startup validation
-  - [ ] Hot-reload without restart
-- [ ] Update system
-  - [ ] Application updates via GitHub
-  - [ ] Change log display
-- [ ] Quality-of-life improvements
-  - [ ] Progress bar visualization
-  - [ ] Preset customization
-- [ ] Automated testing for download interruption/resumption
 
 ## License
 
