@@ -41,7 +41,8 @@ class AppUpdater(BaseDownloader):
 
                 self.finished.emit(True)
         except Exception as e:
-            self.output.emit(self.tr("[update] Error: ") + str(e) if str(e) else "Empty error")
+            msg = str(e) if str(e) else self.tr("Unknown error") + f" ({repr(e)})"
+            self.output.emit(self.tr("[update] Error: ") + msg)
             self.finished.emit(False)
 
     def get_release_metadata(self) -> (str, str):
@@ -49,17 +50,17 @@ class AppUpdater(BaseDownloader):
             data = json.load(response)
 
         latest_version = data["tag_name"].lstrip('v')
-        asset = next(a for a in data["assets"] if
-                     ("windows" in a["name"].lower() and sys.platform == "win32") or
-                     ("linux" in a["name"].lower() and sys.platform == "linux"))
-        download_url = asset["browser_download_url"]
-        download_name = asset["name"]
+        assets = [a for a in data["assets"] if
+                  ("zagruz-win" in a["name"] and sys.platform == "win32") or
+                  ("zagruz-linux" in a["name"] and sys.platform == "linux")]
+        if not assets:
+            raise ValueError(self.tr("No compatible release asset found for platform: ") + sys.platform)
+        download_url = assets[0]["browser_download_url"]
+        download_name = assets[0]["name"]
         return latest_version, download_url, download_name
 
     def is_update_available(self, latest_version: str) -> bool:
         """Check for available updates"""
-        self.output.emit(self.tr("[update] Checking for updates..."))
-
         def parse_version(version_str):
             return tuple(map(int, version_str.split('.')))
 

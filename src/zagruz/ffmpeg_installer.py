@@ -49,7 +49,8 @@ class FFmpegInstaller(BaseDownloader):
 
                 self.finished.emit(True)
         except Exception as e:
-            self.output.emit(self.tr("[ffmpeg] Error: ") + str(e))
+            msg = str(e) if str(e) else self.tr("Unknown error") + f" ({repr(e)})"
+            self.output.emit(self.tr("[ffmpeg] Error: ") + msg)
             self.finished.emit(False)
 
     def extract(self, archive_path: str, tmpdir: str) -> str:
