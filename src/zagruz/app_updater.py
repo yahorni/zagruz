@@ -25,8 +25,10 @@ class AppUpdater(BaseDownloader):
         self.output.emit(self.tr("[update] Starting app update..."))
         try:
             with self._temp_dir() as tmpdir:
+                self.output.emit(self.tr("[update] Getting last release information..."))
                 latest_version, download_url, download_name = self.get_release_metadata()
 
+                self.output.emit(self.tr("[update] Checking if update is available..."))
                 if not self.is_update_available(latest_version):
                     self.finished.emit(True)
                     return
@@ -39,7 +41,7 @@ class AppUpdater(BaseDownloader):
 
                 self.finished.emit(True)
         except Exception as e:
-            self.output.emit(self.tr("[update] Error: ") + str(e))
+            self.output.emit(self.tr("[update] Error: ") + str(e) if str(e) else "Empty error")
             self.finished.emit(False)
 
     def get_release_metadata(self) -> (str, str):

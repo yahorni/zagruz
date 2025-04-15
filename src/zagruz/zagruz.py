@@ -66,13 +66,13 @@ class DownloadApp(QMainWindow):
         self.download_btn.setCheckable(True)
         self.download_btn.clicked.connect(self.toggle_download_action)
 
-        self.update_btn: QPushButton = QPushButton(self.tr(" Update"))
-        self.update_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload))
-        self.update_btn.setToolTip(self.tr("Update application"))
-
         self.open_dir_btn: QPushButton = QPushButton(self.tr(" Open"))
         self.open_dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
         self.open_dir_btn.setToolTip(self.tr("Open download directory"))
+
+        self.update_btn: QPushButton = QPushButton(self.tr(" Update"))
+        self.update_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload))
+        self.update_btn.setToolTip(self.tr("Update application"))
 
         self.options_btn: QPushButton = QPushButton(self.tr(" Options"))
         self.options_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
@@ -85,8 +85,8 @@ class DownloadApp(QMainWindow):
         # Create new button line below URL input
         button_line = QHBoxLayout()
         button_line.addWidget(self.download_btn)
-        button_line.addWidget(self.update_btn)
         button_line.addWidget(self.open_dir_btn)
+        button_line.addWidget(self.update_btn)
         button_line.addWidget(self.options_btn)
 
         # Log output area
