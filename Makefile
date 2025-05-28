@@ -1,4 +1,4 @@
-VERSION := $(shell uv run python -c 'from importlib.metadata import version; print(version("zagruz"))')
+VERSION := $(uv version --short)
 
 ifeq ($(OS),Windows_NT)
 	PLATFORM := windows
@@ -28,7 +28,7 @@ run:
 	uv run zagruz
 
 run-wheel:
-	@# sometimes old version of wheel is taken from cache
+	@# sometimes an old wheel is taken from cache
 	@# to remove it run: make clean-cache
 	uvx ./dist/wheel/zagruz-*.whl zagruz
 
@@ -60,9 +60,6 @@ lang-comp:
 	uv run pyside6-lrelease src/zagruz/translations/*.ts
 
 # utils
-
-version:
-	@echo $(VERSION)
 
 ci-deps-linux:
 	sudo apt-get update
