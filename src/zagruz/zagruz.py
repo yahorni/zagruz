@@ -62,22 +62,18 @@ class DownloadApp(QMainWindow):
         # Buttons with styles
         self.download_btn: QPushButton = QPushButton(self.tr(" Download"))
         self.download_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton))
-        self.download_btn.setToolTip(self.tr("Download video/audio"))
         self.download_btn.setDefault(True)
         self.download_btn.setCheckable(True)
         self.download_btn.clicked.connect(self.toggle_download_action)
 
         self.open_dir_btn: QPushButton = QPushButton(self.tr(" Open"))
         self.open_dir_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
-        self.open_dir_btn.setToolTip(self.tr("Open download directory"))
 
         self.update_btn: QPushButton = QPushButton(self.tr(" Update"))
         self.update_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload))
-        self.update_btn.setToolTip(self.tr("Update application"))
 
         self.options_btn: QPushButton = QPushButton(self.tr(" Options"))
         self.options_btn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
-        self.options_btn.setToolTip(self.tr("Application settings"))
 
         # Create horizontal lines
         url_line = QHBoxLayout()
@@ -399,11 +395,21 @@ class DownloadApp(QMainWindow):
     def retranslateUi(self) -> None:
         """Retranslate all UI elements"""
         self.setWindowTitle(self.tr("zagruz - yt-dlp GUI Wrapper"))
+
         self.url_input.setPlaceholderText(self.tr("Insert URL to download"))
+
         self.download_btn.setText(self.tr(" Download"))
-        self.update_btn.setText(self.tr(" Update"))
+        self.download_btn.setToolTip(self.tr("Download video/audio"))
+
         self.open_dir_btn.setText(self.tr(" Open"))
+        self.open_dir_btn.setToolTip(self.tr("Open download directory"))
+
+        self.update_btn.setText(self.tr(" Update"))
+        self.update_btn.setToolTip(self.tr("Update application"))
+
         self.options_btn.setText(self.tr(" Options"))
+        self.options_btn.setToolTip(self.tr("Application settings"))
+
         self.log_output.setPlaceholderText(self.tr("Log output will appear here..."))
         for widget in self.findChildren(QLabel):
             if widget.text().startswith("Hint:"):
