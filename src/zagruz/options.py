@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from PyQt6.QtCore import QObject, QSettings, QStandardPaths
+from PySide6.QtCore import QObject, QSettings, QStandardPaths
 
 
 class _TranslatableOptionsMeta(ABCMeta, type(QObject)):

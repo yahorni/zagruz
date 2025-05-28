@@ -6,12 +6,12 @@ from importlib.resources import files
 from pathlib import Path
 
 import qdarktheme
-from PyQt6.QtCore import QSettings, Qt, QTranslator, QUrl
-from PyQt6.QtGui import QAction, QDesktopServices, QIcon
-from PyQt6.QtWidgets import (QApplication, QCheckBox, QDialog,
-                             QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
-                             QMainWindow, QPushButton, QStyle, QTextEdit,
-                             QVBoxLayout, QWidget)
+from PySide6.QtCore import QSettings, Qt, QTranslator, QUrl
+from PySide6.QtGui import QAction, QDesktopServices, QIcon
+from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog,
+                               QDialogButtonBox, QHBoxLayout, QLabel,
+                               QLineEdit, QMainWindow, QPushButton, QStyle,
+                               QTextEdit, QVBoxLayout, QWidget)
 
 from zagruz import __version__
 from zagruz.app_updater import AppUpdater
@@ -340,7 +340,7 @@ class DownloadApp(QMainWindow):
             self.log_output.append(self.tr("Language changed to: ") + new_lang)
 
     def apply_theme(self, theme: str) -> None:
-        """Apply selected theme using qdarktheme"""
+        """Apply selected theme"""
 
         # Don't use full qdarktheme, just palette + stylesheets
         self.setPalette(qdarktheme.load_palette(theme))

@@ -1,6 +1,6 @@
 # zagruz - yt-dlp GUI Wrapper
 
-![PyQt6](https://img.shields.io/badge/PyQt6-41CD52?logo=qt&logoColor=white)
+![PySide6](https://img.shields.io/badge/PySide6-41CD52?logo=qt&logoColor=white)
 ![Platform](https://img.shields.io/badge/platform-Windows%20|%20Linux-lightgrey)
 
 A cross-platform GUI frontend for yt-dlp featuring:
@@ -25,7 +25,7 @@ make  # same as: make init run
 ## Dependencies
 
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) - Video download backend
-- [PyQt6](https://www.riverbankcomputing.com/software/pyqt/) - GUI framework
+- [PySide6](https://doc.qt.io/qtforpython-6/) - GUI framework
 - [PyQtDarkTheme](https://github.com/5yutan5/PyQtDarkTheme/) - Qt themes
 
 ## Build and run

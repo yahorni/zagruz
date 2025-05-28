@@ -2,7 +2,7 @@ import os
 import subprocess
 from typing import override
 
-from PyQt6.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 from yt_dlp import YoutubeDL
 
 
@@ -16,8 +16,8 @@ class VideoDownloader(QThread):
         directory: Target directory for downloaded files
     """
 
-    output: pyqtSignal = pyqtSignal(str)
-    finished: pyqtSignal = pyqtSignal(bool)
+    output = Signal(str)
+    finished = Signal(bool)
 
     def __init__(self, url: str, directory: str, format: str) -> None:
         """Initialize download worker with target URL and directory
@@ -39,8 +39,8 @@ class VideoDownloader(QThread):
         """Main thread execution method that runs the yt-dlp process"""
 
         class ProgressLogger:
-            def __init__(self, output_signal: pyqtSignal):
-                self.output_signal: pyqtSignal = output_signal
+            def __init__(self, output_signal: Signal):
+                self.output_signal: Signal = output_signal
 
             def debug(self, msg: str):
                 if not msg.startswith('[debug]'):

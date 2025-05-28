@@ -54,12 +54,10 @@ clean: clean-build clean-venv
 lang: lang-gen lang-comp
 
 lang-gen:
-	uv run pylupdate6 src/zagruz/*.py -ts src/zagruz/translations/*.ts
+	uv run pyside6-lupdate src/zagruz/*.py -ts src/zagruz/translations/*.ts
 
 lang-comp:
-	@# TODO: uv run lrelease src/zagruz/translations/ru_RU.ts
-	@# currently PyQt6 doesn't provide lrelease binary
-	/usr/lib/qt6/bin/lrelease src/zagruz/translations/ru_RU.ts
+	uv run pyside6-lrelease src/zagruz/translations/ru_RU.ts
 
 # utils
 
@@ -82,6 +80,6 @@ ui-widgets:
 	uv run python -m qdarktheme.widget_gallery
 
 ui-themes:
-	uv run python -c 'from PyQt6.QtWidgets import QStyleFactory; print(QStyleFactory.keys())'
+	@uv run python -c 'from PySide6.QtWidgets import QStyleFactory; print(QStyleFactory.keys())'
 
 .PHONY: default init wheel package run run-wheel run-package test clean-build clean-cache clean-venv clean lang lang-gen lang-comp ci-deps-linux ui-widgets ui-themes

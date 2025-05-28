@@ -3,18 +3,18 @@ import time
 import urllib.request
 from typing import ContextManager
 
-from PyQt6.QtCore import QObject, QThread, pyqtSignal
+from PySide6.QtCore import QObject, QThread, Signal
 
 
 class BaseDownloader(QThread):
     """Base class for file downloaders"""
-    output = pyqtSignal(str)
-    finished = pyqtSignal(bool)
+    output = Signal(str)
+    finished = Signal(bool)
 
     class Downloader(QObject):
         """Nested QObject for download operations"""
-        output = pyqtSignal(str)
-        download_progress = pyqtSignal(int, float, float)  # percent, speed MB/s, elapsed
+        output = Signal(str)
+        download_progress = Signal(int, float, float)  # percent, speed MB/s, elapsed
 
         def __init__(self):
             super().__init__()

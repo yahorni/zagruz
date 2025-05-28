@@ -1,9 +1,10 @@
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (QApplication, QComboBox, QDialog, QFileDialog,
-                             QFormLayout, QHBoxLayout, QLineEdit, QPushButton,
-                             QStyle, QVBoxLayout, QWidget)
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (QApplication, QComboBox, QDialog, QFileDialog,
+                               QFormLayout, QHBoxLayout, QLineEdit,
+                               QPushButton, QStyle, QVBoxLayout, QWidget)
 
-from zagruz.options import format_options, lang_options, theme_options, download_dir_options
+from zagruz.options import (download_dir_options, format_options, lang_options,
+                            theme_options)
 
 
 class OptionsDialog(QDialog):
