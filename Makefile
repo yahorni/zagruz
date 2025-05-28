@@ -1,4 +1,4 @@
-VERSION := $(uv version --short)
+VERSION := $(shell uv version --short)
 
 ifeq ($(OS),Windows_NT)
 	PLATFORM := windows
@@ -17,7 +17,7 @@ wheel:
 	uv build --wheel --out-dir ./dist/wheel/
 
 package:
-	uv run --with toml ./scripts/generate_version.py
+	echo "__version__ = '$(VERSION)'" > src/zagruz/_version.py
 	uv run pyinstaller \
 		--noconfirm \
 		--distpath dist/$(PLATFORM) \
