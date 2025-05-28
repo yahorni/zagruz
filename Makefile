@@ -63,6 +63,9 @@ lang-comp:
 
 # utils
 
+version:
+	@echo $(VERSION)
+
 ci-deps-linux:
 	sudo apt-get update
 	sudo apt-get install -y \
