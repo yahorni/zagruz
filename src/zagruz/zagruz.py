@@ -6,7 +6,7 @@ from importlib.resources import files
 from pathlib import Path
 
 import qdarktheme
-from PySide6.QtCore import QSettings, Qt, QTranslator, QUrl
+from PySide6.QtCore import QLibraryInfo, QSettings, Qt, QTranslator, QUrl
 from PySide6.QtGui import QAction, QDesktopServices, QIcon
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog,
                                QDialogButtonBox, QHBoxLayout, QLabel,
@@ -34,6 +34,7 @@ class DownloadApp(QMainWindow):
         super().__init__()
 
         self.translator = QTranslator()
+        self.qt_translator = QTranslator()
         self.update_in_progress: bool = False
 
         self.download_thread: VideoDownloader | None = None
@@ -337,7 +338,7 @@ class DownloadApp(QMainWindow):
             lang_options.selected = new_lang
             self.apply_language(new_lang)
             self.retranslateUi()
-            self.log_output.append(self.tr("Language changed to: ") + new_lang)
+            self.log_output.append(self.tr("Language changed to: ") + lang_options.selected_text)
 
     def apply_theme(self, theme: str) -> None:
         """Apply selected theme"""
@@ -353,16 +354,24 @@ class DownloadApp(QMainWindow):
     def apply_language(self, locale: str) -> None:
         """Load application translations"""
 
-        lang = lang_options.to_text(locale)
-
-        if not lang_options.is_valid(locale):
-            self.log_output.append(self.tr("Unsupported language: ") + lang)
-            return
-
         if locale == "en_US":
             QApplication.instance().removeTranslator(self.translator)
+            QApplication.instance().removeTranslator(self.qt_translator)
             return
 
+        self._apply_language_qt(locale.split('_')[0])
+        self._apply_language_app(locale)
+
+    def _apply_language_qt(self, short_locale: str):
+        qt_translations_path = QLibraryInfo.path(QLibraryInfo.TranslationsPath)
+        if not self.qt_translator.load(f"qtbase_{short_locale}.qm", qt_translations_path):
+            self.log_output.append(self.tr("Failed to find default Qt language file: "))
+            return
+
+        QApplication.instance().installTranslator(self.qt_translator)
+
+    def _apply_language_app(self, locale: str):
+        lang = lang_options.to_text(locale)
         resource_path = None
 
         if getattr(sys, 'frozen', False):

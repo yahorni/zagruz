@@ -87,198 +87,198 @@
 <context>
     <name>DownloadApp</name>
     <message>
-        <location filename="../zagruz.py" line="58"/>
-        <location filename="../zagruz.py" line="393"/>
+        <location filename="../zagruz.py" line="59"/>
+        <location filename="../zagruz.py" line="402"/>
         <source>Insert URL to download</source>
         <translation>Вставьте ссылку для скачивания</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="62"/>
-        <location filename="../zagruz.py" line="200"/>
-        <location filename="../zagruz.py" line="394"/>
+        <location filename="../zagruz.py" line="63"/>
+        <location filename="../zagruz.py" line="201"/>
+        <location filename="../zagruz.py" line="403"/>
         <source> Download</source>
         <translation> Скачать</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="64"/>
+        <location filename="../zagruz.py" line="65"/>
         <source>Download video/audio</source>
         <translation> Скачать видео/аудио</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="69"/>
-        <location filename="../zagruz.py" line="396"/>
+        <location filename="../zagruz.py" line="70"/>
+        <location filename="../zagruz.py" line="405"/>
         <source> Open</source>
         <translation> Открыть</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="71"/>
+        <location filename="../zagruz.py" line="72"/>
         <source>Open download directory</source>
         <translation>Открыть папку для скачивания</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="73"/>
-        <location filename="../zagruz.py" line="395"/>
+        <location filename="../zagruz.py" line="74"/>
+        <location filename="../zagruz.py" line="404"/>
         <source> Update</source>
         <translation> Обновить</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="75"/>
+        <location filename="../zagruz.py" line="76"/>
         <source>Update application</source>
         <translation>Обновить приложение</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="77"/>
-        <location filename="../zagruz.py" line="397"/>
+        <location filename="../zagruz.py" line="78"/>
+        <location filename="../zagruz.py" line="406"/>
         <source> Options</source>
         <translation> Настройки</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="79"/>
+        <location filename="../zagruz.py" line="80"/>
         <source>Application settings</source>
         <translation>Настройки приложения</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="103"/>
-        <location filename="../zagruz.py" line="401"/>
+        <location filename="../zagruz.py" line="104"/>
+        <location filename="../zagruz.py" line="410"/>
         <source>Hint: Press Ctrl+Q to quit</source>
         <translation>Подсказка: Нажми Ctrl+Q чтобы выйти</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="128"/>
+        <location filename="../zagruz.py" line="129"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="134"/>
+        <location filename="../zagruz.py" line="135"/>
         <source>Focus on URL input</source>
         <translation>Фокус на вводе ссылки</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="142"/>
-        <location filename="../zagruz.py" line="274"/>
-        <location filename="../zagruz.py" line="288"/>
+        <location filename="../zagruz.py" line="143"/>
+        <location filename="../zagruz.py" line="275"/>
+        <location filename="../zagruz.py" line="289"/>
         <source>Please wait until the current download finishes</source>
         <translation>Подождите, пока текущая загрузка завершится</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="147"/>
+        <location filename="../zagruz.py" line="148"/>
         <source>Error: Please enter a URL</source>
         <translation>Ошибка: Пожалуйста, введите ссылку</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="151"/>
+        <location filename="../zagruz.py" line="152"/>
         <source>Error: Invalid URL</source>
         <translation>Ошибка: Невалидная ссылка</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="155"/>
+        <location filename="../zagruz.py" line="156"/>
         <source>Download already in progress</source>
         <translation>Загрузка уже в процессе</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="160"/>
+        <location filename="../zagruz.py" line="161"/>
         <source> Interrupt</source>
         <translation> Прервать</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="162"/>
+        <location filename="../zagruz.py" line="163"/>
         <source>Starting download: </source>
         <translation>Загрузка начинается: </translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="203"/>
+        <location filename="../zagruz.py" line="204"/>
         <source>Download completed successfully!</source>
         <translation>Загрузка успешно завершена</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="205"/>
+        <location filename="../zagruz.py" line="206"/>
         <source>Download failed or interrupted</source>
         <translation>Загрузка не удалась либо была прервана</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="218"/>
+        <location filename="../zagruz.py" line="219"/>
         <source>Download interrupted by user</source>
         <translation>Загрузка прервана пользователем</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="220"/>
+        <location filename="../zagruz.py" line="221"/>
         <source>No active download to interrupt</source>
         <translation>Нет активной загрузки для прерывания</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="225"/>
+        <location filename="../zagruz.py" line="226"/>
         <source>Error: Directory does not exist - </source>
         <translation>Ошибка: Папка не существует - </translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="241"/>
+        <location filename="../zagruz.py" line="242"/>
         <source>FFmpeg installation</source>
         <translation>Установка FFmpeg</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="247"/>
+        <location filename="../zagruz.py" line="248"/>
         <source>FFmpeg is required for audio conversion and some video formats.
 Would you like to install it now?</source>
         <translation>FFmpeg необходим для конвертации аудио и некоторых видео форматов.
 Желаете уставить его?</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="251"/>
+        <location filename="../zagruz.py" line="252"/>
         <source>Don&apos;t show this message again</source>
         <translation>Не показывать это снова</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="255"/>
+        <location filename="../zagruz.py" line="256"/>
         <source>Yes</source>
         <translation>Да</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="256"/>
+        <location filename="../zagruz.py" line="257"/>
         <source>No</source>
         <translation>Нет</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="322"/>
+        <location filename="../zagruz.py" line="323"/>
         <source>Download directory updated to: </source>
         <translation>Папка для скачивания обновлена: </translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="327"/>
+        <location filename="../zagruz.py" line="328"/>
         <source>Download format updated to: </source>
         <translation>Формат для скачивания обновлен: </translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="333"/>
+        <location filename="../zagruz.py" line="334"/>
         <source>Theme changed to: </source>
         <translation>Тема обновлена: </translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="340"/>
+        <location filename="../zagruz.py" line="341"/>
         <source>Language changed to: </source>
         <translation>Язык обновлен: </translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="359"/>
-        <source>Unsupported language: </source>
-        <translation>Неподдерживаемый язык: </translation>
+        <location filename="../zagruz.py" line="368"/>
+        <source>Failed to find default Qt language file: </source>
+        <translation>Не удалось найти стандартный языковой файл Qt: </translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="381"/>
+        <location filename="../zagruz.py" line="390"/>
         <source>Failed to find language file: </source>
         <translation>Не удалось найти языковой файл: </translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="385"/>
+        <location filename="../zagruz.py" line="394"/>
         <source>Failed to load language: </source>
         <translation>Не удалось загрузить язык: </translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="392"/>
+        <location filename="../zagruz.py" line="401"/>
         <source>zagruz - yt-dlp GUI Wrapper</source>
         <translation>zagruz - yt-dlp GUI Wrapper</translation>
     </message>
     <message>
-        <location filename="../zagruz.py" line="398"/>
+        <location filename="../zagruz.py" line="407"/>
         <source>Log output will appear here...</source>
         <translation>Сообщения будут появляться здесь...</translation>
     </message>
