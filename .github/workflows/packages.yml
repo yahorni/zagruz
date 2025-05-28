@@ -53,6 +53,9 @@ jobs:
       if: runner.os == 'Linux'
       run: make wheel
 
+    - name: Compile translations
+      run: make lang-comp
+
     - name: Create package
       run: make package
 

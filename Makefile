@@ -57,7 +57,7 @@ lang-gen:
 	uv run pyside6-lupdate src/zagruz/*.py -ts src/zagruz/translations/*.ts
 
 lang-comp:
-	uv run pyside6-lrelease src/zagruz/translations/ru_RU.ts
+	uv run pyside6-lrelease src/zagruz/translations/*.ts
 
 # utils
 

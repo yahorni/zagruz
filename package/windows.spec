@@ -2,13 +2,13 @@
 
 from importlib.metadata import version
 
+from PyInstaller.building.build_main import EXE, PYZ, Analysis
 from PyInstaller.utils.hooks import collect_data_files
 
 pkg_version = version('zagruz')
 
 a = Analysis(
     ['../src/zagruz/zagruz.py'],
-
     datas=[
         *collect_data_files('yt_dlp'),
         ('../src/zagruz/translations/*.qm', 'translations'),
@@ -18,9 +18,10 @@ a = Analysis(
         'yt_dlp.compat',
         'yt_dlp.downloader',
         'yt_dlp.extractor',
-        'PyQt6.QtCore',
-        'PyQt6.QtGui',
-        'PyQt6.QtWidgets',
+        'PySide6.QtCore',
+        'PySide6.QtGui',
+        'PySide6.QtWidgets',
+        'qdarktheme'
     ]
 )
 pyz = PYZ(a.pure, a.zipped_data)
