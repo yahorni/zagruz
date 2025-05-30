@@ -17,7 +17,7 @@ wheel:
 	uv build --wheel --out-dir ./dist/wheel/
 
 package:
-	echo "__version__ = '$(VERSION)'" > src/zagruz/_version.py
+	echo "__version__ = '$(VERSION)'" > ./src/zagruz/_version.py
 	uv run pyinstaller \
 		--noconfirm \
 		--distpath dist/$(PLATFORM) \
@@ -72,6 +72,13 @@ ci-deps-linux:
 	  libxcb-icccm4 \
 	  libxcb-image0 \
 	  libxcb-shape0
+
+release:
+	export new_version="$(shell uv version --short --bump patch)" ;\
+	git add pyproject.toml uv.lock ;\
+	git commit -m "release: v$${new_version}" ;\
+	git tag "v$${new_version}" ;\
+	git push --atomic origin master "v$${new_version}"
 
 ui-widgets:
 	uv run python -m qdarktheme.widget_gallery
