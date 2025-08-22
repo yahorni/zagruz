@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 
 [[package]]
@@ -183,16 +183,16 @@ wheels = [
 
 [[package]]
 name = "yt-dlp"
-version = "2025.7.21"
+version = "2025.8.20"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7e/3a/343f7a0024ddd4c30f150e8d8f57fd7b924846f97d99fc0dcd75ea8d2773/yt_dlp-2025.7.21.tar.gz", hash = "sha256:46fbb53eab1afbe184c45b4c17e9a6eba614be680e4c09de58b782629d0d7f43", size = 3050219, upload-time = "2025-07-21T23:59:03.826Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c8/af/d3c81af35ae2aef148d0ff78f001650ce5a7ca73fbd3b271eb9aab4c56ee/yt_dlp-2025.8.20.tar.gz", hash = "sha256:da873bcf424177ab5c3b701fa94ea4cdac17bf3aec5ef37b91f530c90def7bcf", size = 3037484, upload-time = "2025-08-20T02:58:49.443Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e8/2f/abe59a3204c749fed494849ea29176bcefa186ec8898def9e43f649ddbcf/yt_dlp-2025.7.21-py3-none-any.whl", hash = "sha256:d7aa2b53f9b2f35453346360f41811a0dad1e956e70b35a4ae95039d4d815d15", size = 3288681, upload-time = "2025-07-21T23:59:01.788Z" },
+    { url = "https://files.pythonhosted.org/packages/33/e8/ebd888100684c10799897296e3061c19ba5559b641f8da218bf48229a815/yt_dlp-2025.8.20-py3-none-any.whl", hash = "sha256:073c97e2a3f9cd0fa6a76142c4ef46ca62b2575c37eaf80d8c3718fd6f3277eb", size = 3266841, upload-time = "2025-08-20T02:58:47.142Z" },
 ]
 
 [[package]]
 name = "zagruz"
-version = "0.1.8"
+version = "0.1.9"
 source = { editable = "." }
 dependencies = [
     { name = "pyqtdarktheme" },
@@ -210,6 +210,6 @@ requires-dist = [
     { name = "pyinstaller", marker = "extra == 'package'", specifier = ">=6.0.0" },
     { name = "pyqtdarktheme", specifier = ">=2.1.0" },
     { name = "pyside6", specifier = ">=6.8.1" },
-    { name = "yt-dlp", specifier = ">=2025.7.21" },
+    { name = "yt-dlp", specifier = ">=2025.8.20" },
 ]
 provides-extras = ["package"]
