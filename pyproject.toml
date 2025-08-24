@@ -1,13 +1,13 @@
 [project]
 name = "zagruz"
-version = "0.1.9"
+version = "0.1.10"
 description = "yt-dlp GUI Wrapper"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "pyqtdarktheme>=2.1.0",
     "pyside6>=6.8.1",
-    "yt-dlp>=2025.8.20",
+    "yt-dlp>=2025.8.22",
 ]
 
 [project.optional-dependencies]
