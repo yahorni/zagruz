@@ -1,18 +1,18 @@
 [project]
 name = "zagruz"
-version = "0.1.11"
+version = "0.1.12"
 description = "yt-dlp GUI Wrapper"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "pyqtdarktheme>=2.1.0",
     "pyside6>=6.8.1",
-    "yt-dlp>=2025.9.5",
+    "yt-dlp>=2026.3.3",
 ]
 
 [project.optional-dependencies]
 package = [
-    "pyinstaller>=6.0.0",
+    "pyinstaller>=6.19.0",
 ]
 
 [project.scripts]
